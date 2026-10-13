@@ -27,6 +27,7 @@ export class ScrollManager {
 
   private snapTimer: ReturnType<typeof setTimeout> | undefined
   private snapping = false
+  private activeIndex = -1
 
   constructor({ container, scene, onActive, onReady }: ScrollManagerOptions) {
     this.container = container
@@ -105,18 +106,21 @@ export class ScrollManager {
     return timeline
   }
 
-  /** 每屏一个 ScrollTrigger，暴露 onEnter / onLeave（进入即播放，离开即反向） */
+  /** 每屏一个 ScrollTrigger：暴露 onEnter / onLeave（写入 data-entered 供样式与调试使用） */
   private setupSections() {
-    this.sections.forEach((section, index) => {
+    this.sections.forEach((section) => {
       const trigger = ScrollTrigger.create({
         trigger: section,
         start: 'top 55%',
         end: 'bottom 45%',
         onToggle: (self) => {
-          if (self.isActive) this.onActive?.(index)
+          section.dataset.entered = self.isActive ? 'true' : 'false'
         },
       })
-      this.cleanups.push(() => trigger.kill())
+      this.cleanups.push(() => {
+        trigger.kill()
+        delete section.dataset.entered
+      })
     })
   }
 
@@ -190,7 +194,7 @@ export class ScrollManager {
     this.seek((event as CustomEvent<number>).detail ?? 0)
   }
 
-  /** 滚动 → 场景：section 进度 / 全局进度 / 激活世界 */
+  /** 滚动 → 场景：section 进度 / 全局进度 / 激活世界与激活屏 */
   private update = () => {
     const vh = Math.max(1, window.innerHeight)
     const scroll = window.scrollY
@@ -202,6 +206,13 @@ export class ScrollManager {
     }
 
     this.scene.setGlobalProgress(clamp(scroll / maxScroll, 0, 1))
-    this.scene.setActive(clamp(Math.round(raw), 0, this.sections.length - 1))
+
+    const active = clamp(Math.round(raw), 0, this.sections.length - 1)
+    this.scene.setActive(active)
+
+    if (active !== this.activeIndex) {
+      this.activeIndex = active
+      this.onActive?.(active)
+    }
   }
 }

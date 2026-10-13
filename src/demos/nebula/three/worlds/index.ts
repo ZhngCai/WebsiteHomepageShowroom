@@ -7,6 +7,8 @@ import type { WorldFactory } from '../SceneManager'
 import { CardUniverseWorld } from './CardUniverseWorld'
 import { GalleryWorld } from './GalleryWorld'
 import { NebulaWorld } from './NebulaWorld'
+import { NeuralWorld } from './NeuralWorld'
+import { SingularityWorld } from './SingularityWorld'
 import { TimeWarpWorld } from './TimeWarpWorld'
 
 export function createWorldFactories(): WorldFactory[] {
@@ -17,5 +19,7 @@ export function createWorldFactories(): WorldFactory[] {
     () => new TimeWarpWorld(quality),
     () => new CardUniverseWorld(quality),
     () => new GalleryWorld(quality),
+    () => new NeuralWorld(quality),
+    () => new SingularityWorld(quality),
   ]
 }

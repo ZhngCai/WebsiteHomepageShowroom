@@ -15,6 +15,7 @@ export interface CardFocusDetail {
 
 export const CARD_FOCUS_EVENT = 'nebula:card-focus'
 export const CARD_CLOSE_EVENT = 'nebula:card-close'
+export const SINGULARITY_BURST_EVENT = 'nebula:singularity-burst'
 
 export function emitCardFocus(detail: CardFocusDetail) {
   window.dispatchEvent(new CustomEvent<CardFocusDetail>(CARD_FOCUS_EVENT, { detail }))
@@ -22,4 +23,8 @@ export function emitCardFocus(detail: CardFocusDetail) {
 
 export function emitCardClose() {
   window.dispatchEvent(new CustomEvent(CARD_CLOSE_EVENT))
+}
+
+export function emitSingularityBurst() {
+  window.dispatchEvent(new CustomEvent(SINGULARITY_BURST_EVENT))
 }

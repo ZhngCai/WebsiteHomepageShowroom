@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { inject, onMounted, ref, type ShallowRef } from 'vue'
 import { sectionComponents } from '../sections'
+import SingularityEnding from '../sections/SingularityEnding.vue'
 import { scrollRootKey, sectionList } from '../utils/context'
 
 const root = ref<HTMLElement>()
@@ -24,6 +25,8 @@ onMounted(() => {
     </section>
 
     <!-- 终章空间：为最后一屏留出滚动余量，用于奇点爆炸与结尾动画 -->
-    <div class="nebula-outro relative h-screen w-full" data-outro />
+    <div class="nebula-outro relative h-screen w-full" data-outro>
+      <SingularityEnding />
+    </div>
   </div>
 </template>
