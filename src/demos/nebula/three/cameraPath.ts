@@ -22,8 +22,8 @@ export const cameraPlans: WorldCameraPlan[] = [
   },
   // 02 时间折叠：绕时间环做 360° 空间旋转
   {
-    arrival: rig({ y: 6, z: worldZ(1) + 120, tz: worldZ(1), fov: 60 }),
-    explore: rig({ x: -186, y: 92, z: worldZ(1) + 100, tz: worldZ(1), fov: 58, roll: 0.07 }),
+    arrival: rig({ y: 8, z: worldZ(1) + 200, tz: worldZ(1), fov: 60 }),
+    explore: rig({ x: -212, y: 104, z: worldZ(1) + 152, tz: worldZ(1), fov: 56, roll: 0.07 }),
   },
   // 03 卡片星球：由远及近 zoom in，卡片随后散开
   {
