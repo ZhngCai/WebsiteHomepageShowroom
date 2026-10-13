@@ -29,7 +29,7 @@ onBeforeUnmount(() => {
     </Transition>
 
     <Transition name="veil">
-      <div v-if="veil" class="route-veil pointer-events-none fixed inset-0 z-[800]" />
+      <div v-if="veil" class="route-veil pointer-events-none fixed inset-0 z-800" />
     </Transition>
   </div>
 </template>

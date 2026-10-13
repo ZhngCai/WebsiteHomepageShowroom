@@ -16,7 +16,7 @@ withDefaults(
 
 <template>
   <Transition name="loading">
-    <div v-if="visible" class="fixed inset-0 z-[900] flex flex-col items-center justify-center bg-void">
+    <div v-if="visible" class="fixed inset-0 z-900 flex flex-col items-center justify-center bg-void">
       <div class="relative flex h-28 w-28 items-center justify-center">
         <span class="loading-ring absolute inset-0 rounded-full" />
         <span class="loading-ring absolute inset-3 rounded-full [animation-direction:reverse]" />

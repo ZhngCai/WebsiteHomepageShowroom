@@ -69,7 +69,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="pointer-events-none fixed inset-0 z-[999] hidden md:block">
+  <div class="pointer-events-none fixed inset-0 z-999 hidden md:block">
     <span
       ref="ring"
       class="cursor-ring absolute top-0 left-0 h-10 w-10 rounded-full border border-white/45 transition-[width,height,border-color,background-color] duration-300"
