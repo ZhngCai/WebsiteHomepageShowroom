@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 
 /** 世界之间的空间间隔（沿 -Z 排列，滚动 = 前进） */
-export const WORLD_GAP = 320
+export const WORLD_GAP = 640
 
 export function worldZ(index: number) {
   return -index * WORLD_GAP

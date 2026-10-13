@@ -22,5 +22,8 @@ onMounted(() => {
     >
       <component :is="sectionComponents[index]" :index="index" />
     </section>
+
+    <!-- 终章空间：为最后一屏留出滚动余量，用于奇点爆炸与结尾动画 -->
+    <div class="nebula-outro relative h-screen w-full" data-outro />
   </div>
 </template>
