@@ -3,6 +3,7 @@ import type Lenis from 'lenis'
 import { cameraPlans } from './cameraPath'
 import type { SceneManager } from './SceneManager'
 import { clamp, createLenis, ScrollTrigger } from '../utils/scroll'
+import { prefersReducedMotion } from '@/shared/utils/device'
 
 export interface ScrollManagerOptions {
   container: HTMLElement
@@ -81,7 +82,10 @@ export class ScrollManager {
     this.detachLenis()
   }
 
-  /** 镜头时间轴：6 段，每段 = 探索当前世界(0.62) + 飞向下一世界(0.38) */
+  /**
+   * 镜头时间轴：6 段，总时长固定为 6（1 段 = 1 屏滚动）。
+   * 每段 = 探索当前世界(0.62) + 飞向下一世界(0.38)；末段只做探索。
+   */
   private buildCameraTimeline() {
     const rig = this.scene.rig
     Object.assign(rig, cameraPlans[0].arrival)
@@ -98,8 +102,8 @@ export class ScrollManager {
     })
 
     cameraPlans.forEach((plan, index) => {
-      timeline.to(rig, { ...plan.explore, duration: 0.62 })
       const next = cameraPlans[index + 1]
+      timeline.to(rig, { ...plan.explore, duration: next ? 0.62 : 1 })
       if (next) timeline.to(rig, { ...next.arrival, duration: 0.38 })
     })
 
@@ -126,19 +130,21 @@ export class ScrollManager {
 
   /** DOM 文案进出场：进入 fade + rise，离开自动 reverse */
   private setupReveals() {
+    // 系统开启“减弱动效”时只做淡入，不做位移与模糊
+    const reduced = prefersReducedMotion()
+
     for (const section of [...this.sections, this.container.querySelector<HTMLElement>('[data-outro]')]) {
       if (!section) continue
       const items = section.querySelectorAll('[data-reveal]')
       if (!items.length) continue
 
-      gsap.set(items, { opacity: 0, y: 46, filter: 'blur(14px)' })
+      gsap.set(items, reduced ? { opacity: 0 } : { opacity: 0, y: 46, filter: 'blur(14px)' })
 
       const tween = gsap.to(items, {
         opacity: 1,
-        y: 0,
-        filter: 'blur(0px)',
-        duration: 1.15,
-        stagger: 0.09,
+        ...(reduced ? {} : { y: 0, filter: 'blur(0px)' }),
+        duration: reduced ? 0.6 : 1.15,
+        stagger: reduced ? 0.04 : 0.09,
         ease: 'power3.out',
         scrollTrigger: {
           trigger: section,

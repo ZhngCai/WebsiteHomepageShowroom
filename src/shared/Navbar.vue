@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onBeforeUnmount, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app'
 
@@ -14,10 +15,44 @@ const emit = defineEmits<{ seek: [index: number] }>()
 const router = useRouter()
 const store = useAppStore()
 
+const fps = ref(0)
+let raf = 0
+let frames = 0
+let last = performance.now()
+
+function tick() {
+  raf = requestAnimationFrame(tick)
+  frames++
+  const now = performance.now()
+  if (now - last < 500) return
+  fps.value = Math.round((frames * 1000) / (now - last))
+  frames = 0
+  last = now
+}
+
+function startMeter() {
+  last = performance.now()
+  frames = 0
+  cancelAnimationFrame(raf)
+  raf = requestAnimationFrame(tick)
+}
+
+function stopMeter() {
+  cancelAnimationFrame(raf)
+  fps.value = 0
+}
+
+watch(
+  () => store.settings.showStats,
+  (enabled) => (enabled ? startMeter() : stopMeter()),
+)
+
 function back() {
   store.setDemo(null)
   router.push({ name: 'gallery' })
 }
+
+onBeforeUnmount(stopMeter)
 </script>
 
 <template>
@@ -36,7 +71,7 @@ function back() {
       </div>
     </div>
 
-    <nav v-if="sections?.length" class="pointer-events-auto hidden items-center gap-1.5 md:flex">
+    <nav v-if="sections?.length" class="pointer-events-auto hidden items-center gap-1.5 md:flex" aria-label="章节导航">
       <button
         v-for="(section, index) in sections"
         :key="section.id"
@@ -47,16 +82,25 @@ function back() {
       >
         <span
           class="h-1 w-1 rounded-full transition-all"
-          :class="index === active ? 'w-5 bg-aurora shadow-[0_0_10px_var(--color-aurora)]' : 'bg-white/30 group-hover:bg-white/60'"
+          :class="
+            index === active
+              ? 'w-5 bg-aurora shadow-[0_0_10px_var(--color-aurora)]'
+              : 'bg-white/30 group-hover:bg-white/60'
+          "
         />
         <span class="hidden lg:inline">{{ section.label }}</span>
       </button>
     </nav>
 
     <div class="pointer-events-auto flex items-center gap-2">
-      <span class="glass-soft hidden rounded-full px-3 py-1.5 font-mono text-[10px] tracking-[0.18em] text-ink-dim uppercase sm:block">
-        {{ store.quality.tier }} · {{ store.quality.cards }}c
-      </span>
+      <button
+        class="glass-soft rounded-full px-3 py-1.5 font-mono text-[10px] tracking-[0.18em] text-ink-dim uppercase transition hover:text-ink"
+        :aria-pressed="store.settings.showStats"
+        title="切换性能监视"
+        @click="store.toggleStats()"
+      >
+        {{ store.settings.showStats ? `${fps} fps · dpr ${store.quality.dpr}` : store.qualityLabel }}
+      </button>
     </div>
   </header>
 </template>

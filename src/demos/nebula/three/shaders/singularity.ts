@@ -34,7 +34,7 @@ void main() {
   gl_Position = projectionMatrix * mv;
   gl_PointSize = clamp(uSize * (0.6 + aSeed) * (uScale / max(1.0, -mv.z)), 1.0, 30.0);
 
-  vAlpha = (1.0 - smoothstep(220.0, 760.0, -mv.z)) * (1.0 - burst * 0.55) * (0.35 + ease * 0.85);
+  vAlpha = (1.0 - smoothstep(200.0, 620.0, -mv.z)) * (1.0 - burst * 0.55) * (0.35 + ease * 0.85);
   vSeed = aSeed;
   vKind = aKind;
 }

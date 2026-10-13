@@ -27,7 +27,7 @@ void main() {
   gl_PointSize = clamp(uSize * (0.6 + aSeed) * (uScale / max(1.0, -mv.z)), 1.0, 24.0);
 
   float depth = -mv.z;
-  vAlpha = (1.0 - smoothstep(220.0, 640.0, depth)) * (0.35 + 0.65 * uMorph);
+  vAlpha = (1.0 - smoothstep(160.0, 460.0, depth)) * (0.35 + 0.65 * uMorph);
   vSeed = aSeed;
 }
 `
@@ -69,7 +69,7 @@ void main() {
 
   gl_Position = projectionMatrix * mv;
   vEdge = aEdge;
-  vAlpha = (1.0 - smoothstep(240.0, 720.0, -mv.z)) * uMorph;
+  vAlpha = (1.0 - smoothstep(160.0, 460.0, -mv.z)) * uMorph;
 }
 `
 
@@ -119,7 +119,7 @@ void main() {
   gl_PointSize = clamp(uSize * (uScale / max(1.0, -mv.z)), 1.0, 16.0);
 
   // 两端淡出，形成沿突触流动的脉冲
-  vAlpha = sin(t * 3.14159265) * (1.0 - smoothstep(220.0, 640.0, -mv.z)) * uMorph;
+  vAlpha = sin(t * 3.14159265) * (1.0 - smoothstep(160.0, 460.0, -mv.z)) * uMorph;
 }
 `
 

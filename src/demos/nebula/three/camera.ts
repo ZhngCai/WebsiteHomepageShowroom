@@ -40,8 +40,3 @@ export function applyCameraRig(camera: THREE.PerspectiveCamera, rig: CameraRig, 
     camera.updateProjectionMatrix()
   }
 }
-
-/** 把 rig 复位到某个世界的默认机位 */
-export function resetRig(rig: CameraRig, preset: Partial<CameraRig>) {
-  Object.assign(rig, preset)
-}

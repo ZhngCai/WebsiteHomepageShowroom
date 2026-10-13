@@ -95,6 +95,14 @@ export function disposeObject(root: THREE.Object3D) {
     if (!material) return
 
     for (const item of Array.isArray(material) ? material : [material]) {
+      const uniforms = (item as THREE.ShaderMaterial).uniforms
+      if (uniforms) {
+        for (const uniform of Object.values(uniforms)) {
+          const value = uniform?.value as THREE.Texture | undefined
+          if (value?.isTexture) value.dispose()
+        }
+      }
+
       for (const value of Object.values(item as unknown as Record<string, unknown>)) {
         if (value && typeof value === 'object' && (value as THREE.Texture).isTexture) {
           ;(value as THREE.Texture).dispose()

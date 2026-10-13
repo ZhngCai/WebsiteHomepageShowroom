@@ -75,7 +75,11 @@ let cached: QualityProfile | null = null
 
 export function getQuality(): QualityProfile {
   if (!cached) {
-    const tier = detectTier()
+    // 允许用 ?quality=low|medium|high 强制指定档位（用于演示与回归对比）
+    const override = new URLSearchParams(location.search).get('quality')
+    const tier: QualityTier =
+      override === 'low' || override === 'medium' || override === 'high' ? override : detectTier()
+
     cached = { tier, ...PROFILES[tier] }
   }
   return cached

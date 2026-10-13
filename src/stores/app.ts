@@ -5,7 +5,6 @@ import { getQuality, prefersReducedMotion, type QualityProfile } from '@/shared/
 const STORAGE_KEY = 'acg:settings:v1'
 
 interface PersistedSettings {
-  music: boolean
   showStats: boolean
   cursorFx: boolean
   reducedMotion: boolean
@@ -23,6 +22,7 @@ function readSettings(): Partial<PersistedSettings> {
 export const useAppStore = defineStore('app', () => {
   const persisted = readSettings()
 
+  /** GPU 预算档位（只存普通数据，绝不保存 Three 对象） */
   const quality = ref<QualityProfile>(getQuality())
   const currentDemo = ref<string | null>(null)
   const loading = ref(true)
@@ -30,14 +30,13 @@ export const useAppStore = defineStore('app', () => {
   const activeSection = ref(0)
 
   const settings = reactive<PersistedSettings>({
-    music: false,
     showStats: false,
     cursorFx: true,
     reducedMotion: prefersReducedMotion(),
     ...persisted,
   })
 
-  const isLowEnd = computed(() => quality.value.tier === 'low')
+  const qualityLabel = computed(() => `${quality.value.tier} · ${quality.value.cards} cards`)
 
   watch(
     settings,
@@ -68,22 +67,22 @@ export const useAppStore = defineStore('app', () => {
     activeSection.value = index
   }
 
-  function toggle(key: 'music' | 'showStats' | 'cursorFx') {
-    settings[key] = !settings[key]
+  function toggleStats() {
+    settings.showStats = !settings.showStats
   }
 
   return {
     quality,
+    qualityLabel,
     currentDemo,
     loading,
     loadingProgress,
     activeSection,
     settings,
-    isLowEnd,
     setDemo,
     setLoading,
     setProgress,
     setActiveSection,
-    toggle,
+    toggleStats,
   }
 })

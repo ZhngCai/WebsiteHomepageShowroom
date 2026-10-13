@@ -14,6 +14,22 @@ export interface SceneManagerOptions {
   onActiveChange?: (index: number) => void
 }
 
+/** 开发环境调试句柄（生产构建会被 tree-shake 掉） */
+export interface NebulaDebug {
+  camera: THREE.PerspectiveCamera
+  rig: { x: number; y: number; z: number; fov: number; roll: number }
+  scene: THREE.Scene
+  active: () => number
+  worlds: () => { id: string; index: number; visible: boolean }[]
+  renderer: THREE.WebGLRenderer
+}
+
+declare global {
+  interface Window {
+    __nebula?: NebulaDebug
+  }
+}
+
 /**
  * 场景管理器 —— 单渲染器 / 单场景 / 单相机，
  * 六个世界共享一次 draw call 提交，按需构建、按需更新。
@@ -40,10 +56,16 @@ export class SceneManager {
   private elapsed = 0
   private running = false
   private visible = true
+  private dprScale = 1
+  private frameTime = 0
+  private frameCount = 0
+  private readonly adaptive: boolean
 
   constructor({ canvas, onActiveChange }: SceneManagerOptions) {
     this.canvas = canvas
     this.onActiveChange = onActiveChange
+    // 自适应分辨率默认开启，?adaptive=0 可关闭（便于逐帧截图对比）
+    this.adaptive = !new URLSearchParams(location.search).has('adaptive=0')
     this.renderer = createRenderer(canvas, this.quality)
     this.scene = createScene()
     this.camera = createCamera()
@@ -96,6 +118,22 @@ export class SceneManager {
     window.addEventListener('pointermove', this.onPointerMove, { passive: true })
     document.addEventListener('visibilitychange', this.onVisibility)
     this.canvas.addEventListener('webglcontextlost', this.onContextLost, false)
+
+    if (import.meta.env.DEV) {
+      window.__nebula = {
+        camera: this.camera,
+        rig: this.rig,
+        scene: this.scene,
+        renderer: this.renderer,
+        active: () => this.activeIndex,
+        worlds: () =>
+          [...this.worlds.entries()].map(([index, world]) => ({
+            id: world.id,
+            index,
+            visible: world.group.visible,
+          })),
+      }
+    }
   }
 
   stop() {
@@ -105,7 +143,7 @@ export class SceneManager {
   }
 
   resize() {
-    const { width, height } = resizeRenderer(this.renderer, this.camera, this.quality)
+    const { width, height } = resizeRenderer(this.renderer, this.camera, this.quality, this.dprScale)
     this.stars.resize(height)
 
     for (const world of this.worlds.values()) {
@@ -134,6 +172,8 @@ export class SceneManager {
     this.scene.clear()
     this.renderer.dispose()
     this.renderer.forceContextLoss()
+
+    if (import.meta.env.DEV) delete window.__nebula
   }
 
   private tick = (time: number, deltaTime: number) => {
@@ -147,7 +187,11 @@ export class SceneManager {
     this.elapsed += delta
     this.pointer.lerp(this.pointerTarget, 0.06)
 
+    if (this.adaptive) this.adaptResolution(deltaTime)
+
     applyCameraRig(this.camera, this.rig, this.pointer.x * 1.4, -this.pointer.y * 0.9)
+    // 远景星尘跟随相机，飞行途中的空隙始终有星空
+    this.stars.group.position.copy(this.camera.position)
     this.stars.update(this.elapsed)
 
     const ctx: FrameContext = {
@@ -174,6 +218,26 @@ export class SceneManager {
     }
 
     this.renderer.render(this.scene, this.camera)
+  }
+
+  /** 帧率守卫：持续掉帧时下调渲染分辨率，回到流畅区间再缓慢回升 */
+  private adaptResolution(deltaTime: number) {
+    this.frameTime += deltaTime
+    this.frameCount++
+    if (this.frameCount < 45) return
+
+    const average = this.frameTime / this.frameCount
+    this.frameTime = 0
+    this.frameCount = 0
+
+    const step = average > 24 ? -0.12 : average < 13 ? 0.06 : 0
+    if (step === 0) return
+
+    const next = Math.min(1, Math.max(0.6, this.dprScale + step))
+    if (Math.abs(next - this.dprScale) < 0.001) return
+
+    this.dprScale = next
+    this.resize()
   }
 
   private ensureWorlds() {
