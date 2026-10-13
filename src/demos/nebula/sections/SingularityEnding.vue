@@ -24,7 +24,7 @@ onBeforeUnmount(() => window.removeEventListener(SINGULARITY_BURST_EVENT, onBurs
 
     <div class="relative max-w-3xl">
       <p class="flex items-center justify-center gap-3 font-mono text-[11px] tracking-[0.34em] text-ink-dim uppercase" data-reveal>
-        <span class="h-px w-8 bg-gradient-to-r from-transparent to-white/70" />
+        <span class="h-px w-8 bg-linear-to-r from-transparent to-white/70" />
         End of transmission
       </p>
 
@@ -33,7 +33,7 @@ onBeforeUnmount(() => window.removeEventListener(SINGULARITY_BURST_EVENT, onBurs
         data-reveal
       >
         ENTER THE
-        <span class="bg-gradient-to-r from-aurora via-nebula to-ember bg-clip-text text-transparent">FUTURE</span>
+        <span class="bg-linear-to-r from-aurora via-nebula to-ember bg-clip-text text-transparent">FUTURE</span>
       </h2>
 
       <p class="mx-auto mt-6 max-w-xl text-[14px] leading-relaxed text-ink-dim md:text-[15px]" data-reveal>

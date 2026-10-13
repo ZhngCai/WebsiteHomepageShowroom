@@ -27,7 +27,7 @@ withDefaults(
 
       <div class="mt-5 h-px w-56 overflow-hidden bg-white/12">
         <div
-          class="h-full bg-gradient-to-r from-aurora via-nebula to-ember transition-[width] duration-500 ease-out"
+          class="h-full bg-linear-to-r from-aurora via-nebula to-ember transition-[width] duration-500 ease-out"
           :style="{ width: `${Math.round(progress * 100)}%` }"
         />
       </div>

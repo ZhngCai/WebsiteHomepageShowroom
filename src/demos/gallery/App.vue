@@ -31,13 +31,13 @@ function openDemo(name: string) {
     <div class="relative mx-auto max-w-7xl px-5 pt-24 pb-24 md:px-10 md:pt-32">
       <header class="flex flex-col gap-8">
         <div class="flex items-center gap-3 font-mono text-[11px] tracking-[0.4em] text-ink-dim uppercase">
-          <span class="h-px w-10 bg-gradient-to-r from-transparent to-aurora" />
+          <span class="h-px w-10 bg-linear-to-r from-transparent to-aurora" />
           AI Creative Website Gallery
         </div>
 
         <h1 class="max-w-4xl text-5xl leading-[0.95] font-semibold tracking-tight md:text-7xl">
           沉浸式官网
-          <span class="bg-gradient-to-r from-aurora via-nebula to-ember bg-clip-text text-transparent"> Demo 展厅</span>
+          <span class="bg-linear-to-r from-aurora via-nebula to-ember bg-clip-text text-transparent"> Demo 展厅</span>
         </h1>
 
         <p class="max-w-2xl text-base leading-relaxed text-ink-dim md:text-lg">
