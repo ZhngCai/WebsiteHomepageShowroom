@@ -33,7 +33,7 @@ export const cameraPlans: WorldCameraPlan[] = [
   // 04 无限画廊：滚动即前进，穿过整条图片长廊
   {
     arrival: rig({ z: worldZ(3) + 60, tz: worldZ(3) - 380, fov: 66 }),
-    explore: rig({ z: worldZ(3) - 560, tz: worldZ(3) - 980, fov: 80 }),
+    explore: rig({ z: worldZ(3) - 560, tz: worldZ(3) - 980, fov: 80, roll: 0.035 }),
   },
   // 05 AI 宇宙：进入神经网络内部
   {

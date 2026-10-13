@@ -5,6 +5,7 @@
 import { getQuality } from '@/shared/utils/device'
 import type { WorldFactory } from '../SceneManager'
 import { CardUniverseWorld } from './CardUniverseWorld'
+import { GalleryWorld } from './GalleryWorld'
 import { NebulaWorld } from './NebulaWorld'
 import { TimeWarpWorld } from './TimeWarpWorld'
 
@@ -15,5 +16,6 @@ export function createWorldFactories(): WorldFactory[] {
     () => new NebulaWorld(quality),
     () => new TimeWarpWorld(quality),
     () => new CardUniverseWorld(quality),
+    () => new GalleryWorld(quality),
   ]
 }
