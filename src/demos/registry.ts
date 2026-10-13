@@ -1,0 +1,81 @@
+/**
+ * Demo 注册表 —— 新增 Demo 只需在此追加一条记录，
+ * 路由 / 首页大厅 / 状态管理会自动生效，无需改动任何既有代码。
+ */
+
+export interface DemoMeta {
+  name: string
+  title: string
+  tagline: string
+  description: string
+  stack: string[]
+  accent: string
+  cover: string
+  sections: string[]
+}
+
+export interface DemoEntry extends DemoMeta {
+  load: () => Promise<unknown>
+}
+
+export const demos: DemoEntry[] = [
+  {
+    name: 'nebula',
+    title: 'Nebula Odyssey',
+    tagline: '未来数字艺术官网',
+    description:
+      '滚动即穿越：星云入口 → 时间折叠 → 卡片星球 → 无限画廊 → AI 宇宙 → 奇点。六屏六世界，Scroll = Camera Movement。',
+    stack: ['Vue3', 'Three.js', 'GSAP', 'Lenis', 'Shader'],
+    accent: '#7c5cff',
+    cover: 'radial-gradient(120% 120% at 20% 10%, #2ee6ff33 0%, transparent 45%), linear-gradient(140deg, #120c2e 0%, #3b1f7a 45%, #05060f 100%)',
+    sections: ['Nebula Portal', 'Time Warp', 'Card Universe', 'Infinite Gallery', 'AI Universe', 'Singularity'],
+    load: () => import('@/demos/nebula/App.vue'),
+  },
+]
+
+export const plannedDemos: DemoMeta[] = [
+  {
+    name: 'apple-vision',
+    title: 'Vision Space',
+    tagline: 'Apple 级产品页',
+    description: 'Vision Pro 风格的滚动叙事、玻璃材质与镜头语言。',
+    stack: ['Vue3', 'Three.js', 'GSAP'],
+    accent: '#9fb4ff',
+    cover: 'linear-gradient(150deg, #1b2233 0%, #47536e 50%, #0a0d14 100%)',
+    sections: ['Product Reveal', 'Feature Grid', 'Buy'],
+  },
+  {
+    name: 'nft-gallery',
+    title: 'NFT Vault',
+    tagline: '数字艺术馆',
+    description: '无限展墙、作品详情抽屉与竞拍信息面板。',
+    stack: ['Vue3', 'WebGL', 'Pinia'],
+    accent: '#ff5fa2',
+    cover: 'linear-gradient(150deg, #2a0a1d 0%, #7b2352 55%, #0b0509 100%)',
+    sections: ['Curated', 'Auctions', 'Artist'],
+  },
+  {
+    name: 'ai-memory',
+    title: 'AI Memory',
+    tagline: 'AI 数字记忆',
+    description: '以神经网络结构可视化个人记忆与语义检索。',
+    stack: ['Vue3', 'Three.js', 'Shader'],
+    accent: '#2ee6ff',
+    cover: 'linear-gradient(150deg, #06222b 0%, #0d6b7d 55%, #04090c 100%)',
+    sections: ['Recall', 'Graph', 'Timeline'],
+  },
+  {
+    name: 'future-city',
+    title: 'Future City',
+    tagline: '未来城市官网',
+    description: '程序化生成的城市天际线，昼夜与天气实时切换。',
+    stack: ['Vue3', 'Three.js', 'Instancing'],
+    accent: '#ffc46b',
+    cover: 'linear-gradient(150deg, #2a1e06 0%, #8a6420 55%, #0a0803 100%)',
+    sections: ['Skyline', 'Transit', 'Energy'],
+  },
+]
+
+export function findDemo(name: string) {
+  return demos.find((demo) => demo.name === name)
+}

@@ -1,0 +1,145 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-void: #04050a;
+  --color-void-soft: #0a0c16;
+  --color-nebula: #7c5cff;
+  --color-aurora: #2ee6ff;
+  --color-ember: #ff5fa2;
+  --color-gold: #ffc46b;
+  --color-ink: #e9ecff;
+  --color-ink-dim: #9aa3c7;
+
+  --font-display: 'Inter', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+@layer base {
+  html,
+  body,
+  #app {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-void);
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-nebula) 55%, transparent);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--color-aurora) 70%, transparent);
+    outline-offset: 3px;
+  }
+
+  canvas {
+    display: block;
+    touch-action: none;
+  }
+
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+}
+
+/* ---------- Lenis ---------- */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+@layer components {
+  .glass {
+    background: linear-gradient(140deg, rgb(255 255 255 / 12%), rgb(255 255 255 / 4%));
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    border: 1px solid rgb(255 255 255 / 14%);
+    box-shadow:
+      0 24px 60px -20px rgb(0 0 0 / 70%),
+      inset 0 1px 0 rgb(255 255 255 / 18%);
+  }
+
+  .glass-soft {
+    background: rgb(10 12 22 / 55%);
+    backdrop-filter: blur(18px) saturate(120%);
+    -webkit-backdrop-filter: blur(18px) saturate(120%);
+    border: 1px solid rgb(255 255 255 / 10%);
+  }
+
+  .text-glow {
+    text-shadow: 0 0 28px color-mix(in oklab, var(--color-nebula) 65%, transparent);
+  }
+
+  .grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.045;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+/* ---------- 自定义光标 ---------- */
+body.cursor-hidden,
+body.cursor-hidden * {
+  cursor: none !important;
+}
+
+/* ---------- 路由切换动画 ---------- */
+.route-enter-active,
+.route-leave-active {
+  transition:
+    opacity 0.6s var(--ease-out-expo),
+    transform 0.9s var(--ease-out-expo),
+    filter 0.6s linear;
+}
+
+.route-enter-from {
+  opacity: 0;
+  transform: scale(1.04);
+  filter: blur(14px);
+}
+
+.route-leave-to {
+  opacity: 0;
+  transform: scale(0.97);
+  filter: blur(18px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-enter-active,
+  .route-leave-active {
+    transition-duration: 0.01ms;
+  }
+}
