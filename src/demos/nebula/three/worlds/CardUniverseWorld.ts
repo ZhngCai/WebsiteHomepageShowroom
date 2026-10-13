@@ -4,7 +4,7 @@ import { createArtAtlas } from '@/shared/three/textures'
 import type { QualityProfile } from '@/shared/utils/device'
 import { worldZ } from '../scene'
 import { CARD_FRAG, CARD_VERT } from '../shaders/card'
-import { BaseWorld, type FrameContext } from '../World'
+import { BaseWorld, exitFade, type FrameContext } from '../World'
 import { CARD_CLOSE_EVENT, emitCardClose, emitCardFocus } from '../../utils/events'
 
 const SPHERE_RADIUS = 30
@@ -47,6 +47,7 @@ export class CardUniverseWorld extends BaseWorld {
   private focusFrom: { position: THREE.Vector3; quaternion: THREE.Quaternion; scale: number } | null = null
   private focusT = 0
   private appear = 0
+  private exit = 1
   private progress = 0
 
   private dragging = false
@@ -103,7 +104,8 @@ export class CardUniverseWorld extends BaseWorld {
       fragmentShader: CARD_FRAG,
       uniforms: {
         uTime: { value: 0 },
-        uAppear: { value: 0 },
+        uGather: { value: 0 },
+        uOpacity: { value: 0 },
         uScatter: { value: 0 },
         uAtlas: { value: texture },
         uCols: { value: cols },
@@ -131,6 +133,7 @@ export class CardUniverseWorld extends BaseWorld {
   }
 
   protected onLeave() {
+    // 只解除交互；球体形态与亮度保持，交给着色器的距离淡出
     this.detach()
     this.closeFocus()
   }
@@ -142,11 +145,18 @@ export class CardUniverseWorld extends BaseWorld {
 
   update(ctx: FrameContext) {
     this.camera = ctx.camera
+    this.exit = exitFade(this.progress)
 
+    const opacity = this.appear * this.exit
     if (this.material) {
       this.material.uniforms.uTime.value = ctx.time
-      this.material.uniforms.uAppear.value = this.appear
+      this.material.uniforms.uGather.value = this.appear
+      this.material.uniforms.uOpacity.value = opacity
       this.material.uniforms.uScatter.value = this.progress
+    }
+    if (this.focusMaterial) {
+      this.focusMaterial.uniforms.uTime.value = ctx.time
+      this.focusMaterial.uniforms.uOpacity.value = opacity
     }
 
     // 自动旋转 + 拖动惯性
@@ -383,7 +393,8 @@ export class CardUniverseWorld extends BaseWorld {
       fragmentShader: CARD_FRAG,
       uniforms: {
         uTime: { value: 0 },
-        uAppear: { value: 1 },
+        uGather: { value: 1 },
+        uOpacity: { value: 1 },
         uScatter: { value: 0 },
         uAtlas: { value: this.material?.uniforms.uAtlas.value ?? null },
         uCols: { value: cols },

@@ -5,6 +5,7 @@ export const NEBULA_PARTICLE_VERT = /* glsl */ `
 uniform float uTime;
 uniform float uMorph;
 uniform float uSpeed;
+uniform float uOpacity;
 uniform float uScale;
 uniform float uSize;
 uniform vec2 uPointer;
@@ -47,10 +48,10 @@ void main() {
   gl_PointSize = clamp(uSize * aSize * (uScale / max(1.0, -mv.z)), 0.8, 15.0);
 
   float near = smoothstep(0.5, 14.0, -mv.z);
-  float far = 1.0 - smoothstep(240.0, 720.0, -mv.z);
+  float far = 1.0 - smoothstep(180.0, 560.0, -mv.z);
   float twinkle = 0.55 + 0.45 * sin(uTime * (0.8 + aSeed * 2.0) + aSeed * 40.0);
 
-  vAlpha = near * far * mix(0.05, 0.62, ease) * twinkle * mix(1.0, 1.3, min(uSpeed, 3.0) * 0.3);
+  vAlpha = near * far * mix(0.05, 0.62, ease) * twinkle * mix(1.0, 1.3, min(uSpeed, 3.0) * 0.3) * uOpacity;
   vSeed = aSeed;
 }
 `

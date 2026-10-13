@@ -82,7 +82,6 @@ export class SceneManager {
     for (let i = 0; i < factories.length; i++) this.sectionProgress.push(0)
 
     this.ensureWorlds()
-    this.worlds.get(this.activeIndex)?.enter()
   }
 
   getWorld(index: number) {
@@ -264,6 +263,8 @@ export class SceneManager {
       world.build()
       this.scene.add(world.group)
       this.worlds.set(index, world)
+      // 进入可视范围即显影：保证快跳/拖动滚动条时邻近世界也已就绪
+      world.enter()
       return world
     } catch (error) {
       console.error(`[scene] 世界 ${index} 构建失败:`, error)

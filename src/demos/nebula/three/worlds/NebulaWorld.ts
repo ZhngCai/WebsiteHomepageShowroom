@@ -5,7 +5,7 @@ import type { QualityProfile } from '@/shared/utils/device'
 import { createNebulaParticles } from '../particles'
 import { worldZ } from '../scene'
 import { GLASS_PLANET_FRAG, GLASS_PLANET_VERT } from '../shaders/nebula'
-import { BaseWorld, type FrameContext } from '../World'
+import { BaseWorld, createFadeGroup, exitFade, type FrameContext } from '../World'
 
 /**
  * 01 星云入口 —— 上万粒子构成的旋臂星云 + 中心巨大透明星球。
@@ -27,6 +27,9 @@ export class NebulaWorld extends BaseWorld {
   } | null = null
 
   private progress = 0
+  private appear = 0
+  private exit = 1
+  private fadeGroup: ReturnType<typeof createFadeGroup> | null = null
 
   constructor(quality: QualityProfile) {
     super()
@@ -52,9 +55,7 @@ export class NebulaWorld extends BaseWorld {
         overwrite: true,
       })
     }
-    if (this.planetUniforms) {
-      gsap.to(this.planetUniforms.uOpacity, { value: 1, duration: 2.2, delay: 1.1, ease: 'power2.out' })
-    }
+    gsap.to(this, { appear: 1, duration: 2.2, delay: 1.1, ease: 'power2.out', overwrite: true })
   }
 
   setProgress(progress: number) {
@@ -68,11 +69,19 @@ export class NebulaWorld extends BaseWorld {
   update(ctx: FrameContext) {
     if (!this.particles) return
 
+    this.exit = exitFade(this.progress)
+    const opacity = this.appear * this.exit
+
     // 滚动速度变化：静止 0.6 → 穿越 3.0
-    this.particles.update(ctx.time, 0.6 + this.progress * 2.4, ctx.pointer)
+    this.particles.update(ctx.time, 0.6 + this.progress * 2.4, ctx.pointer, this.exit)
     this.particles.object.rotation.z = ctx.time * 0.012
 
-    if (this.planetUniforms) this.planetUniforms.uTime.value = ctx.time
+    if (this.planetUniforms) {
+      this.planetUniforms.uTime.value = ctx.time
+      this.planetUniforms.uOpacity.value = opacity
+    }
+
+    this.fadeGroup?.set(opacity)
 
     if (this.core) {
       this.core.rotation.y = ctx.time * 0.09
@@ -147,5 +156,6 @@ export class NebulaWorld extends BaseWorld {
 
     this.core = core
     this.group.add(core)
+    this.fadeGroup = createFadeGroup(core)
   }
 }

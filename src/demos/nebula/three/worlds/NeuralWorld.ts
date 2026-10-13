@@ -11,10 +11,12 @@ import {
   NEURAL_NODE_FRAG,
   NEURAL_NODE_VERT,
 } from '../shaders/neural'
-import { BaseWorld, type FrameContext } from '../World'
+import { BaseWorld, exitFade, type FrameContext } from '../World'
 
 const GOLDEN = Math.PI * (3 - Math.sqrt(5))
 const CHAOS_RADIUS = 250
+/** 成形完成点：相机在 0.62 处开始飞离，因此形态必须在此之前完成 */
+const MORPH_END = 0.62
 
 /**
  * 05 AI 宇宙 —— 1000 个节点从混沌态逐渐连接成神经网络。
@@ -30,6 +32,7 @@ export class NeuralWorld extends BaseWorld {
   private flow: THREE.Points | null = null
   private core: THREE.Sprite | null = null
   private appear = 0
+  private exit = 1
   private progress = 0
 
   constructor(quality: QualityProfile) {
@@ -62,8 +65,11 @@ export class NeuralWorld extends BaseWorld {
       seeds[i] = Math.random()
     }
 
-    this.buildNodes(chaos, brain, seeds, count)
-    this.buildFlow(chaos, brain)
+    // 突触：基于大脑形态构建 k 近邻连接，混沌态与成形态共用同一批边
+    const edges = buildEdges(brain, count, this.quality.neuralEdges)
+
+    this.buildNodes(chaos, brain, seeds, count, edges)
+    this.buildFlow(chaos, brain, edges)
     this.buildCore()
   }
 
@@ -71,40 +77,46 @@ export class NeuralWorld extends BaseWorld {
     gsap.to(this, { appear: 1, duration: 1.4, ease: 'power2.out', overwrite: true })
   }
 
-  protected onLeave() {
-    gsap.to(this, { appear: 0.3, duration: 1.2, ease: 'power2.out', overwrite: true })
-  }
+  // 离开时不改变形态与出现度：由着色器中的距离淡出自然接管，
+  // 避免世界在相机尚未离开时就开始“溶解”。
 
   setProgress(progress: number) {
     this.progress = progress
   }
 
   update(ctx: FrameContext) {
-    // 混沌 → 大脑：滚动进度驱动形态插值
-    const morph = Math.min(1, Math.max(0, this.progress)) * this.appear
+    // 混沌 → 大脑：进度前 62% 完成成形，之后形态保持稳定
+    const raw = Math.min(1, Math.max(0, this.progress / MORPH_END))
+    const morph = raw * raw * (3 - 2 * raw)
+
+    this.exit = exitFade(this.progress)
+    const opacity = this.appear * this.exit
 
     const nodeMaterial = this.nodes?.material as THREE.ShaderMaterial | undefined
     if (nodeMaterial) {
       nodeMaterial.uniforms.uTime.value = ctx.time
       nodeMaterial.uniforms.uMorph.value = morph
+      nodeMaterial.uniforms.uOpacity.value = opacity
     }
 
     const lineMaterial = this.lines?.material as THREE.ShaderMaterial | undefined
     if (lineMaterial) {
       lineMaterial.uniforms.uTime.value = ctx.time
       lineMaterial.uniforms.uMorph.value = morph
+      lineMaterial.uniforms.uOpacity.value = opacity
     }
 
     const flowMaterial = this.flow?.material as THREE.ShaderMaterial | undefined
     if (flowMaterial) {
       flowMaterial.uniforms.uTime.value = ctx.time
       flowMaterial.uniforms.uMorph.value = morph
+      flowMaterial.uniforms.uOpacity.value = opacity
     }
 
     if (this.core) {
-      const scale = 150 + morph * 60 + Math.sin(ctx.time * 0.8) * 6
+      const scale = 130 + morph * 50 + Math.sin(ctx.time * 0.8) * 6
       this.core.scale.setScalar(scale)
-      ;(this.core.material as THREE.SpriteMaterial).opacity = 0.12 + morph * 0.22
+      ;(this.core.material as THREE.SpriteMaterial).opacity = (0.06 + morph * 0.14) * opacity
     }
 
     if (this.nodes) this.nodes.rotation.y = ctx.time * 0.02
@@ -112,7 +124,13 @@ export class NeuralWorld extends BaseWorld {
     if (this.flow) this.flow.rotation.y = ctx.time * 0.02
   }
 
-  private buildNodes(chaos: Float32Array, brain: Float32Array, seeds: Float32Array, count: number) {
+  private buildNodes(
+    chaos: Float32Array,
+    brain: Float32Array,
+    seeds: Float32Array,
+    count: number,
+    edges: [number, number][],
+  ) {
     const geometry = new THREE.BufferGeometry()
     geometry.setAttribute('position', new THREE.BufferAttribute(chaos, 3))
     geometry.setAttribute('aBrain', new THREE.BufferAttribute(brain, 3))
@@ -125,6 +143,7 @@ export class NeuralWorld extends BaseWorld {
       uniforms: {
         uTime: { value: 0 },
         uMorph: { value: 0 },
+        uOpacity: { value: 0 },
         uScale: { value: window.innerHeight * 0.5 },
         uSize: { value: 2.7 },
         uColorA: { value: new THREE.Color('#a78bfa') },
@@ -139,8 +158,7 @@ export class NeuralWorld extends BaseWorld {
     this.nodes.frustumCulled = false
     this.group.add(this.nodes)
 
-    // 突触连线：k 近邻（k=2）构建静态缓冲，形态插值交给顶点着色器
-    const edges = buildEdges(brain, count, this.quality.neuralEdges)
+    // 突触连线：k 近邻构建静态缓冲，形态插值交给顶点着色器
     const linePositions = new Float32Array(edges.length * 2 * 3)
     const lineBrain = new Float32Array(edges.length * 2 * 3)
     const lineEdges = new Float32Array(edges.length * 2)
@@ -178,6 +196,7 @@ export class NeuralWorld extends BaseWorld {
       uniforms: {
         uTime: { value: 0 },
         uMorph: { value: 0 },
+        uOpacity: { value: 0 },
         uColorA: { value: new THREE.Color('#7c5cff') },
         uColorB: { value: new THREE.Color('#bff4ff') },
       },
@@ -191,10 +210,9 @@ export class NeuralWorld extends BaseWorld {
     this.group.add(this.lines)
   }
 
-  /** 沿突触流动的粒子：位置由两个节点插值得到，整段动画在 GPU 上完成 */
-  private buildFlow(chaos: Float32Array, brain: Float32Array) {
+  /** 沿真实突触流动的粒子：两端节点取自连线表，整段动画在 GPU 上完成 */
+  private buildFlow(chaos: Float32Array, brain: Float32Array, edges: [number, number][]) {
     const count = this.quality.flowParticles
-    const nodeCount = this.quality.neuralNodes
 
     const from = new Float32Array(count * 3)
     const fromBrain = new Float32Array(count * 3)
@@ -204,10 +222,12 @@ export class NeuralWorld extends BaseWorld {
     const speeds = new Float32Array(count)
     const positions = new Float32Array(count * 3)
 
+    if (!edges.length) return
+
     for (let i = 0; i < count; i++) {
-      const a = Math.floor(Math.random() * nodeCount)
-      let b = Math.floor(Math.random() * nodeCount)
-      if (b === a) b = (b + 1) % nodeCount
+      const edge = edges[Math.floor(Math.random() * edges.length)]
+      const a = edge[0]
+      const b = edge[1]
 
       from[i * 3] = chaos[a * 3]
       from[i * 3 + 1] = chaos[a * 3 + 1]
@@ -243,6 +263,7 @@ export class NeuralWorld extends BaseWorld {
       uniforms: {
         uTime: { value: 0 },
         uMorph: { value: 0 },
+        uOpacity: { value: 0 },
         uScale: { value: window.innerHeight * 0.5 },
         uSize: { value: 4.6 },
         uColor: { value: new THREE.Color('#8ff0ff') },
@@ -262,12 +283,12 @@ export class NeuralWorld extends BaseWorld {
       new THREE.SpriteMaterial({
         map: createRadialGlowTexture('#a78bfa', 256),
         transparent: true,
-        opacity: 0.12,
+        opacity: 0.06,
         blending: THREE.AdditiveBlending,
         depthWrite: false,
       }),
     )
-    this.core.scale.setScalar(160)
+    this.core.scale.setScalar(140)
     this.group.add(this.core)
   }
 
@@ -306,15 +327,17 @@ function brainPoint(index: number, count: number) {
   return new THREE.Vector3(x + noise, yy + noise * 0.6, z - noise * 0.8)
 }
 
-/** k 近邻连线（k=2，去重），限制总边数 */
+/** k 近邻连线（k=4，去重），限制总边数 */
+const NEIGHBOURS = 4
+
 function buildEdges(brain: Float32Array, count: number, maxEdges: number) {
   const edges: [number, number][] = []
+  const best = new Int32Array(NEIGHBOURS)
+  const bestDistance = new Float64Array(NEIGHBOURS)
 
   for (let i = 0; i < count; i++) {
-    let best1 = -1
-    let best2 = -1
-    let d1 = Infinity
-    let d2 = Infinity
+    best.fill(-1)
+    bestDistance.fill(Infinity)
 
     const xi = brain[i * 3]
     const yi = brain[i * 3 + 1]
@@ -322,24 +345,28 @@ function buildEdges(brain: Float32Array, count: number, maxEdges: number) {
 
     for (let j = 0; j < count; j++) {
       if (j === i) continue
+
       const dx = xi - brain[j * 3]
       const dy = yi - brain[j * 3 + 1]
       const dz = zi - brain[j * 3 + 2]
       const distance = dx * dx + dy * dy + dz * dz
+      if (distance >= bestDistance[NEIGHBOURS - 1]) continue
 
-      if (distance < d1) {
-        d2 = d1
-        best2 = best1
-        d1 = distance
-        best1 = j
-      } else if (distance < d2) {
-        d2 = distance
-        best2 = j
+      let slot = NEIGHBOURS - 1
+      while (slot > 0 && bestDistance[slot - 1] > distance) {
+        bestDistance[slot] = bestDistance[slot - 1]
+        best[slot] = best[slot - 1]
+        slot--
       }
+      bestDistance[slot] = distance
+      best[slot] = j
     }
 
-    if (best1 >= 0 && i < best1) edges.push([i, best1])
-    if (best2 >= 0 && i < best2) edges.push([i, best2])
+    for (let k = 0; k < NEIGHBOURS; k++) {
+      const j = best[k]
+      if (j >= 0 && i < j) edges.push([i, j])
+    }
+
     if (edges.length >= maxEdges) break
   }
 

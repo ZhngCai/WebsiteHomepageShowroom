@@ -52,9 +52,7 @@ export class SingularityWorld extends BaseWorld {
     gsap.to(this, { appear: 1, duration: 1.4, ease: 'power2.out', overwrite: true })
   }
 
-  protected onLeave() {
-    gsap.to(this, { appear: 0.3, duration: 1.2, ease: 'power2.out', overwrite: true })
-  }
+  // 离开时保持形态：光球与粒子由着色器的距离淡出接管。
 
   setProgress(progress: number) {
     this.progress = progress

@@ -85,6 +85,40 @@ export abstract class BaseWorld implements World {
   protected onLeave() {}
 }
 
+/** 世界在「飞离阶段」平滑退场：进度 0.62 → 0.9 之间淡出，回滚时自动恢复 */
+export const TRAVEL_START = 0.62
+export const TRAVEL_END = 0.9
+
+export function exitFade(progress: number) {
+  const t = Math.min(1, Math.max(0, (progress - TRAVEL_START) / (TRAVEL_END - TRAVEL_START)))
+  return 1 - t * t * (3 - 2 * t)
+}
+
+/**
+ * 批量透明度的句柄：收集子树中使用内置材质（非 ShaderMaterial）的对象，
+ * 统一按比例缩放它们的原始 opacity。
+ */
+export function createFadeGroup(root: THREE.Object3D) {
+  const entries: { material: THREE.Material & { opacity: number }; base: number }[] = []
+
+  root.traverse((node) => {
+    const material = (node as THREE.Mesh).material
+    if (!material || Array.isArray(material)) return
+    if ((material as THREE.ShaderMaterial).isShaderMaterial) return
+
+    const opacity = (material as { opacity?: number }).opacity
+    if (typeof opacity !== 'number') return
+
+    entries.push({ material: material as THREE.Material & { opacity: number }, base: opacity })
+  })
+
+  return {
+    set(scale: number) {
+      for (const entry of entries) entry.material.opacity = entry.base * scale
+    },
+  }
+}
+
 /** 递归释放整棵子树的 geometry / material / texture */
 export function disposeObject(root: THREE.Object3D) {
   root.traverse((node) => {

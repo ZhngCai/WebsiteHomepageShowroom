@@ -2,7 +2,8 @@
 
 export const CARD_VERT = /* glsl */ `
 uniform float uTime;
-uniform float uAppear;
+uniform float uGather;
+uniform float uOpacity;
 uniform float uScatter;
 
 attribute float aTile;
@@ -28,11 +29,11 @@ void main() {
   vec3 outward = normalize(transformed + vec3(0.001));
 
   // 进入：从远处聚合；滚动：卡片向外散开
-  transformed += outward * ((1.0 - uAppear) * 46.0 + uScatter * 7.0);
+  transformed += outward * ((1.0 - uGather) * 46.0 + uScatter * 7.0);
   transformed.y += sin(uTime * 0.7 + aSeed * 32.0) * 0.32;
 
   vec4 mv = modelViewMatrix * vec4(transformed, 1.0);
-  vFade = (1.0 - smoothstep(150.0, 420.0, -mv.z)) * clamp(uAppear, 0.0, 1.0);
+  vFade = (1.0 - smoothstep(150.0, 420.0, -mv.z)) * clamp(uOpacity, 0.0, 1.0);
 
   gl_Position = projectionMatrix * mv;
 }

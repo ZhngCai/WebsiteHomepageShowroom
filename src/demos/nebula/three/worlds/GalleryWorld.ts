@@ -4,12 +4,17 @@ import { createArtAtlas } from '@/shared/three/textures'
 import type { QualityProfile } from '@/shared/utils/device'
 import { worldZ } from '../scene'
 import { GALLERY_FRAG, GALLERY_VERT } from '../shaders/gallery'
-import { BaseWorld, type FrameContext } from '../World'
+import { clamp } from '../../utils/scroll'
+import { BaseWorld, exitFade, type FrameContext } from '../World'
 
-const TUNNEL_DEPTH = 760
-const AHEAD = 260
-const BEHIND = 500
+const TUNNEL_DEPTH = 660
+const AHEAD = 240
+const BEHIND = 420
 const TILE_SIZE = 21
+/** 相机在本世界内的飞行范围（local z），回收参考点必须夹紧在此范围内：
+ *  否则相机飞离后图块仍会被搬回相机前方，串入下一个世界的画面。 */
+const CAMERA_FROM = -560
+const CAMERA_TO = 60
 const WORLD_UP = new THREE.Vector3(0, 1, 0)
 
 interface Tile {
@@ -45,6 +50,7 @@ export class GalleryWorld extends BaseWorld {
   private readonly scaleScratch = new THREE.Vector3()
 
   private appear = 0
+  private exit = 1
   private progress = 0
   private cameraLocalZ = 0
   private recycled = 0
@@ -118,9 +124,7 @@ export class GalleryWorld extends BaseWorld {
     gsap.to(this, { appear: 1, duration: 1.6, ease: 'power2.out', overwrite: true })
   }
 
-  protected onLeave() {
-    gsap.to(this, { appear: 0.25, duration: 1.2, ease: 'power2.out', overwrite: true })
-  }
+  // 离开时不降透明度：由着色器的距离淡出接管，避免相机尚在长廊内就整体变暗。
 
   setProgress(progress: number) {
     this.progress = progress
@@ -128,16 +132,17 @@ export class GalleryWorld extends BaseWorld {
 
   update(ctx: FrameContext) {
     this.camera = ctx.camera
+    this.exit = exitFade(this.progress)
 
     if (this.material) {
       this.material.uniforms.uTime.value = ctx.time
-      this.material.uniforms.uAppear.value = this.appear
+      this.material.uniforms.uAppear.value = this.appear * this.exit
       this.material.uniforms.uSpeed.value = this.progress
       // 焦点平面随速度前移：越快越远，形成“隧道尽头”的观感
       this.material.uniforms.uFocus.value = 110 + this.progress * 90
     }
 
-    this.cameraLocalZ = ctx.camera.position.z - this.group.position.z
+    this.cameraLocalZ = clamp(ctx.camera.position.z - this.group.position.z, CAMERA_FROM, CAMERA_TO)
     this.recycle()
   }
 

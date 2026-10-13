@@ -38,7 +38,7 @@ void main() {
   vBlur = clamp(abs(depth - uFocus) / uFocusRange, 0.0, 1.0);
 
   // 相机身后的图块淡出，远处淡入黑暗
-  vFade = (1.0 - smoothstep(340.0, 920.0, depth)) * smoothstep(-30.0, 70.0, depth) * clamp(uAppear, 0.0, 1.0);
+  vFade = (1.0 - smoothstep(200.0, 420.0, depth)) * smoothstep(-30.0, 70.0, depth) * clamp(uAppear, 0.0, 1.0);
 
   gl_Position = projectionMatrix * mv;
 }

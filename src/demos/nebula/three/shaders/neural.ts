@@ -3,6 +3,7 @@
 export const NEURAL_NODE_VERT = /* glsl */ `
 uniform float uTime;
 uniform float uMorph;
+uniform float uOpacity;
 uniform float uScale;
 uniform float uSize;
 
@@ -27,7 +28,7 @@ void main() {
   gl_PointSize = clamp(uSize * (0.6 + aSeed) * (uScale / max(1.0, -mv.z)), 1.0, 24.0);
 
   float depth = -mv.z;
-  vAlpha = (1.0 - smoothstep(160.0, 460.0, depth)) * (0.35 + 0.65 * uMorph);
+  vAlpha = (1.0 - smoothstep(200.0, 600.0, depth)) * (0.35 + 0.65 * uMorph) * uOpacity;
   vSeed = aSeed;
 }
 `
@@ -56,6 +57,7 @@ void main() {
 
 export const NEURAL_LINE_VERT = /* glsl */ `
 uniform float uMorph;
+uniform float uOpacity;
 
 attribute vec3 aBrain;
 attribute float aEdge;
@@ -69,7 +71,7 @@ void main() {
 
   gl_Position = projectionMatrix * mv;
   vEdge = aEdge;
-  vAlpha = (1.0 - smoothstep(160.0, 460.0, -mv.z)) * uMorph;
+  vAlpha = (1.0 - smoothstep(200.0, 600.0, -mv.z)) * uMorph * uOpacity;
 }
 `
 
@@ -85,7 +87,7 @@ void main() {
   // 突触随机放电
   float pulse = smoothstep(0.82, 1.0, sin(uTime * 1.3 + vEdge * 17.0));
   vec3 color = mix(uColorA, uColorB, pulse);
-  float alpha = vAlpha * (0.08 + pulse * 0.72);
+  float alpha = vAlpha * (0.16 + pulse * 0.68);
 
   gl_FragColor = vec4(color, alpha);
   #include <colorspace_fragment>
@@ -95,6 +97,7 @@ void main() {
 export const NEURAL_FLOW_VERT = /* glsl */ `
 uniform float uTime;
 uniform float uMorph;
+uniform float uOpacity;
 uniform float uScale;
 uniform float uSize;
 
@@ -119,7 +122,7 @@ void main() {
   gl_PointSize = clamp(uSize * (uScale / max(1.0, -mv.z)), 1.0, 16.0);
 
   // 两端淡出，形成沿突触流动的脉冲
-  vAlpha = sin(t * 3.14159265) * (1.0 - smoothstep(160.0, 460.0, -mv.z)) * uMorph;
+  vAlpha = sin(t * 3.14159265) * (1.0 - smoothstep(200.0, 600.0, -mv.z)) * uMorph * uOpacity;
 }
 `
 

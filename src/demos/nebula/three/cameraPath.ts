@@ -35,10 +35,10 @@ export const cameraPlans: WorldCameraPlan[] = [
     arrival: rig({ z: worldZ(3) + 60, tz: worldZ(3) - 380, fov: 66 }),
     explore: rig({ z: worldZ(3) - 560, tz: worldZ(3) - 980, fov: 80, roll: 0.035 }),
   },
-  // 05 AI 宇宙：进入神经网络内部
+  // 05 AI 宇宙：从网络外部推进到内部（停在近侧球壳内侧，远侧半球始终充满画面）
   {
-    arrival: rig({ z: worldZ(4) + 160, tz: worldZ(4), fov: 62 }),
-    explore: rig({ z: worldZ(4) + 10, tz: worldZ(4) - 120, fov: 84 }),
+    arrival: rig({ z: worldZ(4) + 240, tz: worldZ(4), fov: 60 }),
+    explore: rig({ z: worldZ(4) + 70, tz: worldZ(4) - 60, fov: 72 }),
   },
   // 06 奇点：逼近光球 → 爆炸
   {

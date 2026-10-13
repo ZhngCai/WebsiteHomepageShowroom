@@ -46,6 +46,7 @@ export function createNebulaParticles(count: number) {
     uTime: { value: 0 },
     uMorph: { value: 0 },
     uSpeed: { value: 0.6 },
+    uOpacity: { value: 1 },
     uScale: { value: window.innerHeight * 0.5 },
     uSize: { value: 1.05 },
     uPointer: { value: new THREE.Vector2() },
@@ -69,9 +70,10 @@ export function createNebulaParticles(count: number) {
   return {
     object,
     uniforms,
-    update(time: number, speed: number, pointer: THREE.Vector2) {
+    update(time: number, speed: number, pointer: THREE.Vector2, opacity = 1) {
       uniforms.uTime.value = time
       uniforms.uSpeed.value = speed
+      uniforms.uOpacity.value = opacity
       uniforms.uPointer.value.copy(pointer)
     },
     resize(height: number) {

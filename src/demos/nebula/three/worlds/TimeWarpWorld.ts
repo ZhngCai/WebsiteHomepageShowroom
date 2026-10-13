@@ -4,7 +4,7 @@ import { createArtTexture, createRadialGlowTexture, createTextTexture } from '@/
 import type { QualityProfile } from '@/shared/utils/device'
 import { worldZ } from '../scene'
 import { TIME_RING_FRAG, TIME_RING_VERT } from '../shaders/timeRing'
-import { BaseWorld, type FrameContext } from '../World'
+import { BaseWorld, createFadeGroup, exitFade, type FrameContext } from '../World'
 
 const RING_RADIUS = 62
 const YEARS = ['2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025']
@@ -30,6 +30,8 @@ export class TimeWarpWorld extends BaseWorld {
 
   private progress = 0
   private appear = 0
+  private exit = 1
+  private fadeGroup: ReturnType<typeof createFadeGroup> | null = null
 
   constructor(quality: QualityProfile) {
     super()
@@ -45,6 +47,7 @@ export class TimeWarpWorld extends BaseWorld {
     this.buildYears(curve)
     this.buildCards(curve)
     this.buildCore()
+    this.fadeGroup = createFadeGroup(this.group)
   }
 
   protected onEnter() {
@@ -52,20 +55,25 @@ export class TimeWarpWorld extends BaseWorld {
     gsap.to(this, { appear: 1, duration: 1.6, ease: 'power2.out', overwrite: true })
   }
 
-  protected onLeave() {
-    gsap.to(this, { appear: 0.35, duration: 1.2, ease: 'power2.out', overwrite: true })
-  }
+  // 离开时不主动降透明度：由着色器中的距离淡出接管，
+  // 避免相机尚未离开时环体就开始消失。
 
   setProgress(progress: number) {
     this.progress = progress
   }
 
   update(ctx: FrameContext) {
+    this.exit = exitFade(this.progress)
+    const opacity = this.appear * this.exit
+
     if (this.ringUniforms) {
       this.ringUniforms.uTime.value = ctx.time
       this.ringUniforms.uSpeed.value = 0.4 + this.progress * 1.6
-      this.ringUniforms.uOpacity.value = this.appear
+      this.ringUniforms.uOpacity.value = opacity
     }
+
+    // 年份精灵 / 影像卡片 / 柔光管：统一退场
+    this.fadeGroup?.set(opacity)
 
     const spin = ctx.time * 0.05 + this.progress * 0.5
     if (this.ring) this.ring.rotation.z = spin
@@ -77,8 +85,6 @@ export class TimeWarpWorld extends BaseWorld {
 
     if (this.vortex) {
       this.vortex.rotation.z = -ctx.time * 0.22 - this.progress * 0.9
-      const material = this.vortex.material as THREE.PointsMaterial
-      material.opacity = this.appear * (0.28 + this.progress * 0.4)
     }
 
     if (this.group.children.length) {
