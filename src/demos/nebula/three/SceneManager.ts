@@ -105,8 +105,16 @@ export class SceneManager {
   }
 
   resize() {
-    const { height } = resizeRenderer(this.renderer, this.camera, this.quality)
+    const { width, height } = resizeRenderer(this.renderer, this.camera, this.quality)
     this.stars.resize(height)
+
+    for (const world of this.worlds.values()) {
+      try {
+        world.resize(width, height)
+      } catch (error) {
+        console.error(`[world:${world.id}] resize 失败:`, error)
+      }
+    }
   }
 
   dispose() {

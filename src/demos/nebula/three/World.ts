@@ -35,6 +35,8 @@ export interface World {
   update(ctx: FrameContext): void
   /** 该 section 的滚动进度 0 ~ 1 */
   setProgress(progress: number): void
+  /** 视口尺寸变化 */
+  resize(width: number, height: number): void
   /** 释放 geometry / material / texture */
   dispose(): void
 }
@@ -69,6 +71,8 @@ export abstract class BaseWorld implements World {
   setProgress(_progress: number) {}
 
   update(_ctx: FrameContext) {}
+
+  resize(_width: number, _height: number) {}
 
   dispose() {
     disposeObject(this.group)

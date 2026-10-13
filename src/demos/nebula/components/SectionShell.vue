@@ -23,7 +23,9 @@ withDefaults(
     ]"
     :style="{ '--accent': accent }"
   >
-    <div class="max-w-3xl" :class="align === 'center' ? 'mx-auto' : ''">
+    <div class="section-scrim absolute inset-0" :class="align === 'center' ? 'is-center' : ''" />
+
+    <div class="relative max-w-3xl" :class="align === 'center' ? 'mx-auto' : ''">
       <p class="flex items-center gap-3 font-mono text-[11px] tracking-[0.34em] uppercase" :class="align === 'center' ? 'justify-center' : ''" data-reveal>
         <span class="text-ink-dim/60">{{ String(index + 1).padStart(2, '0') }}</span>
         <span class="h-px w-8" :style="{ background: `linear-gradient(90deg, ${accent}, transparent)` }" />
@@ -56,6 +58,16 @@ withDefaults(
 </template>
 
 <style scoped>
+.section-scrim {
+  background:
+    radial-gradient(46% 62% at 16% 74%, rgb(4 5 10 / 82%) 0%, rgb(4 5 10 / 40%) 45%, transparent 72%),
+    linear-gradient(180deg, rgb(4 5 10 / 45%) 0%, transparent 34%, rgb(4 5 10 / 62%) 100%);
+}
+
+.section-scrim.is-center {
+  background: radial-gradient(56% 58% at 50% 50%, rgb(4 5 10 / 74%) 0%, rgb(4 5 10 / 28%) 52%, transparent 76%);
+}
+
 .scroll-arrow {
   animation: breathe 2.4s ease-in-out infinite;
 }

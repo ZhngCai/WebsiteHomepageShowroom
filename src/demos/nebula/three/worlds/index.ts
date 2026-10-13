@@ -2,8 +2,12 @@
  * 世界工厂注册表 —— 六个世界按索引注册，SceneManager 按需实例化。
  * 新增/替换某个世界只需修改这里，不触碰其它世界代码。
  */
+import { getQuality } from '@/shared/utils/device'
 import type { WorldFactory } from '../SceneManager'
+import { NebulaWorld } from './NebulaWorld'
 
 export function createWorldFactories(): WorldFactory[] {
-  return []
+  const quality = getQuality()
+
+  return [() => new NebulaWorld(quality)]
 }

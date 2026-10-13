@@ -152,8 +152,11 @@ export class ScrollManager {
 
   /** 吸附：停止滚动后自动对齐到最近的一屏（Apple 官网式 snap） */
   private setupSnap() {
+    // 调试开关：?nosnap 关闭吸附，便于逐帧检查中间态
+    const enabled = !new URLSearchParams(location.search).has('nosnap')
+
     const schedule = () => {
-      if (this.snapping) return
+      if (!enabled || this.snapping) return
       clearTimeout(this.snapTimer)
       this.snapTimer = setTimeout(() => {
         if (this.lenis.isScrolling || Math.abs(this.lenis.velocity) > 0.35) {

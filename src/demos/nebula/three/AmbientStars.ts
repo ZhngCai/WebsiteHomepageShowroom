@@ -34,7 +34,7 @@ void main() {
   if (mask <= 0.001) discard;
 
   vec3 color = mix(uColorA, uColorB, vSeed);
-  float alpha = mask * vTwinkle * 0.85;
+  float alpha = mask * vTwinkle;
   gl_FragColor = vec4(color * alpha, alpha);
   #include <colorspace_fragment>
 }
@@ -70,7 +70,7 @@ export function createAmbientStars(count: number) {
     uniforms: {
       uTime: { value: 0 },
       uScale: { value: window.innerHeight * 0.5 },
-      uSize: { value: 2.6 },
+      uSize: { value: 3.4 },
       uColorA: { value: new THREE.Color('#8fa6ff') },
       uColorB: { value: new THREE.Color('#ffd9f0') },
     },
