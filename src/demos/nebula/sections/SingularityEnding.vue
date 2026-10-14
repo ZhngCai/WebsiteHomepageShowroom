@@ -20,9 +20,9 @@ onBeforeUnmount(() => window.removeEventListener(SINGULARITY_BURST_EVENT, onBurs
 
 <template>
   <div class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center px-6 text-center">
-    <div class="ending-scrim absolute inset-0" />
+    <div class="ending-scrim pointer-events-none absolute inset-0" />
 
-    <div class="relative max-w-3xl">
+    <div class="pointer-events-auto relative max-w-3xl">
       <p class="flex items-center justify-center gap-3 font-mono text-[11px] tracking-[0.34em] text-ink-dim uppercase" data-reveal>
         <span class="h-px w-8 bg-linear-to-r from-transparent to-white/70" />
         End of transmission

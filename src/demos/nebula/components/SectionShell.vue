@@ -23,9 +23,9 @@ withDefaults(
     ]"
     :style="{ '--accent': accent }"
   >
-    <div class="section-scrim absolute inset-0" :class="align === 'center' ? 'is-center' : ''" />
+    <div class="section-scrim pointer-events-none absolute inset-0" :class="align === 'center' ? 'is-center' : ''" />
 
-    <div class="relative max-w-3xl" :class="align === 'center' ? 'mx-auto' : ''">
+    <div class="pointer-events-auto relative max-w-3xl" :class="align === 'center' ? 'mx-auto' : ''">
       <p class="flex items-center gap-3 font-mono text-[11px] tracking-[0.34em] uppercase" :class="align === 'center' ? 'justify-center' : ''" data-reveal>
         <span class="text-ink-dim/60">{{ String(index + 1).padStart(2, '0') }}</span>
         <span class="h-px w-8" :style="{ background: `linear-gradient(90deg, ${accent}, transparent)` }" />

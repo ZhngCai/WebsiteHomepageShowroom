@@ -55,7 +55,7 @@
   height: 170vh;
 }
 
-/* ---------- 全屏章节的 DOM 层（3D 画面之上，不拦截指针） ---------- */
+/* ---------- 全屏章节的 DOM 层（空白处透传给 3D，文案自身可交互/可被源码定位） ---------- */
 .fe-layer {
   pointer-events: none;
   position: absolute;
@@ -64,6 +64,10 @@
   display: flex;
   align-items: flex-end;
   padding: 0 1.5rem 14vh;
+}
+
+.fe-layer > :not(.sr-only):not(.fe-heading-scrim) {
+  pointer-events: auto;
 }
 
 .fe-layer--cards,
