@@ -112,6 +112,25 @@
   font-weight: 600;
 }
 
+/* ---------- 漂浮空间（非全屏章节：标题在章节内 sticky，3D 物体场在其后滚动） ---------- */
+.fe-floating {
+  position: relative;
+  min-height: 130vh;
+  padding: 18vh 1.5rem 12vh;
+}
+
+@media (min-width: 768px) {
+  .fe-floating {
+    padding-inline: 4rem;
+  }
+}
+
+.fe-floating > .fe-heading {
+  position: sticky;
+  top: 24vh;
+  max-width: 34rem;
+}
+
 /* ---------- 电影级暗角 ---------- */
 .fe-vignette {
   z-index: 20;

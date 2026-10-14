@@ -83,8 +83,10 @@ export const cameraPlans: CameraPlan[] = [
     explore: rig({ z: worldZ(2) + 84, tz: worldZ(2) - 70, fov: 72 }),
   },
   // 04 Floating Objects：侧向游走，像在展览馆中穿行
+  // 到达机位拉到 880：物体壳层半径 46~196、距离淡出延伸到 620，
+  // 若到达机位只有 230，相机在「品牌时间轴」中段就会看到物体淡入
   {
-    arrival: rig({ z: worldZ(3) + 230, tz: worldZ(3), fov: 56 }),
+    arrival: rig({ z: worldZ(3) + 880, tz: worldZ(3), fov: 56 }),
     explore: rig({ x: -118, y: 42, z: worldZ(3) + 60, tz: worldZ(3), fov: 62, roll: 0.03 }),
   },
   // 05 Singularity Ending：逼近能量球 → 爆炸

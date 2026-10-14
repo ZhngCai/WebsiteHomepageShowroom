@@ -223,12 +223,16 @@ export class ScrollManager {
 
     // 章节进度直接用实时布局计算：与激活世界的锚点解析同源，
     // 不依赖 ScrollTrigger 的区间推算（pin / 动态高度下更稳）。
-    // 口径：章节自身的「可滚动距离」——高于一屏的章节扣除一屏高度，
-    // 否则末章（170vh）的进度永远到不了 1，爆炸等收尾动画无法触发。
+    // 口径：min(章节高度, 该章节到文档末尾还能滚动的距离)。
+    // - 用 height 而非 height - vh：否则高 1170px 的「漂浮空间」进度区间只剩 270px，
+    //   进度提前跑满，exitFade 会在章节还有 780px 未滚完时就把场景抹掉；
+    // - 取 min 是为了末章（170vh）：它后面没有内容，若用 height 则进度永远到不了 1，
+    //   爆炸等收尾动画无法触发。
     for (const anchor of this.anchors) {
       const section = this.sections[anchor.sectionIndex]
       const height = Math.max(1, section.offsetHeight)
-      const range = Math.max(1, height > vh ? height - vh : height)
+      const reachable = Math.max(1, this.maxScroll - section.offsetTop)
+      const range = Math.min(height, reachable)
       this.scene.setSectionProgress(anchor.world, clamp((scroll - section.offsetTop) / range, 0, 1))
     }
 
