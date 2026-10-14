@@ -1,14 +1,14 @@
 开始Phase0。
 
 
-创建Vue3 + TypeScript + Three.js项目。
+创建Vue3项目架构。
 
 
-要求：
+完成：
 
-配置：
+Vue Router
 
-Vite
+Pinia
 
 Three.js
 
@@ -16,31 +16,18 @@ GSAP
 
 Lenis
 
-TailwindCSS
+
+建立：
+
+demos目录。
 
 
-建立目录：
+实现：
 
-components
-
-three
-
-utils
+Demo动态路由加载。
 
 
-创建：
-
-App.vue
-
-MainScene.vue
-
-
-完成：
-
-基础全屏滚动框架。
-
-
-暂时不要开发具体效果。
+暂时不要写视觉效果。
 
 
 输出完整代码。

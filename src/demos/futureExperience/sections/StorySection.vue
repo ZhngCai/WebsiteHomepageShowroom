@@ -22,7 +22,6 @@ const details = [
 ]
 
 const root = useSectionEffect((section) => {
-  const text = section.querySelector<HTMLElement>('[data-story-text]')
   const media = section.querySelector<HTMLElement>('[data-story-media]')
   const inset = section.querySelector<HTMLElement>('[data-story-inset]')
   const line = section.querySelector<HTMLElement>('[data-story-line]')
@@ -31,18 +30,10 @@ const root = useSectionEffect((section) => {
   const triggers: ScrollTrigger[] = []
   const tweens: ReturnType<typeof gsap.fromTo>[] = []
 
-  // 文字固定：GSAP pin（不占额外空间，章节滚完自动解除）
-  if (text) {
-    triggers.push(
-      ScrollTrigger.create({
-        trigger: section,
-        start: 'top 18%',
-        end: 'bottom 62%',
-        pin: text,
-        pinSpacing: false,
-      }),
-    )
-  }
+  // 「文字固定」用 CSS sticky 实现（.fe-story__text）。
+  // 说明：GSAP pin 会注入 pin-spacer 并改变 grid 布局，解除后文字位置会漂移；
+  // sticky 视觉等价且不干扰布局，滚动动画仍全部由 GSAP ScrollTrigger 驱动。
+  void triggers
 
   // 主图：视差 + 缓慢放大（scrub 跟随滚动）
   if (media) {
@@ -166,9 +157,9 @@ const root = useSectionEffect((section) => {
 .fe-story {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   min-height: 120vh;
-  padding: 14vh 1.5rem;
+  padding: 14vh 1.5rem 10vh;
 }
 
 .fe-story__grid {
@@ -178,6 +169,10 @@ const root = useSectionEffect((section) => {
   margin-inline: auto;
   gap: 3rem;
   grid-template-columns: 1fr;
+  /* 关键：使用 start 对齐。GSAP pin 会把文字列包进 pin-spacer，
+     spacer 默认 align-self 继承 align-items；若这里用 center，
+     spacer 会被拉伸导致解除 pin 后文字位置漂移、压到下一屏。 */
+  align-items: start;
 }
 
 @media (min-width: 1024px) {
@@ -188,7 +183,9 @@ const root = useSectionEffect((section) => {
 }
 
 .fe-story__text {
-  align-self: center;
+  /* 文字固定：sticky 使文案在章节内保持不动，图片继续视差滚动 */
+  position: sticky;
+  top: 22vh;
 }
 
 .fe-story__eyebrow {

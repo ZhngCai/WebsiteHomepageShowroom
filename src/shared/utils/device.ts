@@ -20,6 +20,8 @@ export interface QualityProfile {
   heroParticles: number
   floatingObjects: number
   endingParticles: number
+  /** Future Experience：卡片球数量（需求 100+） */
+  futureCards: number
 }
 
 const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier'>> = {
@@ -37,6 +39,7 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier'>> = {
     heroParticles: 13000,
     floatingObjects: 44,
     endingParticles: 9000,
+    futureCards: 120,
   },
   medium: {
     dpr: 1.6,
@@ -52,6 +55,7 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier'>> = {
     heroParticles: 7000,
     floatingObjects: 28,
     endingParticles: 5200,
+    futureCards: 88,
   },
   low: {
     dpr: 1.25,
@@ -67,6 +71,7 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier'>> = {
     heroParticles: 3600,
     floatingObjects: 16,
     endingParticles: 2600,
+    futureCards: 60,
   },
 }
 

@@ -72,8 +72,8 @@ export const cameraPlans: CameraPlan[] = [
   },
   // 02 Card Universe：由远及近 zoom in，卡片随后散开
   {
-    arrival: rig({ z: worldZ(1) + 165, tz: worldZ(1), fov: 56 }),
-    explore: rig({ z: worldZ(1) + 58, tz: worldZ(1), fov: 46 }),
+    arrival: rig({ z: worldZ(1) + 210, tz: worldZ(1), fov: 56 }),
+    explore: rig({ z: worldZ(1) + 88, tz: worldZ(1), fov: 46 }),
   },
   // 03 AI Neural World：从网络外部推进到内部
   {

@@ -117,6 +117,7 @@ export class SceneManager {
         scene: this.scene,
         renderer: this.renderer,
         active: () => this.activeIndex,
+        instances: () => [...this.worlds.values()],
         worlds: () =>
           [...this.worlds.entries()].map(([index, world]) => ({
             id: world.id,
