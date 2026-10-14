@@ -19,7 +19,7 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
+    // baseUrl 已在 TypeScript 7.0 弃用；paths 直接相对 tsconfig.json 解析
     "paths": {
       "@/*": ["./src/*"]
     }
