@@ -4,9 +4,10 @@
  */
 import { getQuality } from '@/shared/utils/device'
 import type { WorldFactory } from '../SceneManager'
+import { HeroWorld } from './HeroWorld'
 
 export function createWorldFactories(): WorldFactory[] {
   const quality = getQuality()
 
-  return []
+  return [() => new HeroWorld(quality)]
 }

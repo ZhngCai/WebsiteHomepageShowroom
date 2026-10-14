@@ -164,8 +164,11 @@ export class ScrollManager {
       const section = this.sections[anchor.sectionIndex]
       const trigger = ScrollTrigger.create({
         trigger: section,
+        // 区间必须等于「本章节占据滚动距离」：
+        // start=章节顶部对齐视口顶部；end=章节底部对齐视口顶部。
+        // 若写成 'bottom bottom'，对恰好 100vh 的章节区间长度为 0，进度会瞬间跳到 1。
         start: 'top top',
-        end: 'bottom bottom',
+        end: 'bottom top',
         onUpdate: (self) => this.scene.setSectionProgress(anchor.world, self.progress),
         onToggle: (self) => {
           section.dataset.entered = self.isActive ? 'true' : 'false'

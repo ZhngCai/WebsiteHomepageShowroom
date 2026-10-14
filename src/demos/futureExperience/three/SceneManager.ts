@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import gsap from 'gsap'
 import { createStarfield } from '@/shared/three/Starfield'
+import '@/shared/three/debug'
 import { applyCameraRig, createCamera, createCameraRig } from './Camera'
 import { createRenderer, resizeRenderer } from './Renderer'
 import type { FrameContext, World } from './World'
@@ -21,21 +22,8 @@ export interface SceneManagerOptions {
   onActiveChange?: (index: number) => void
 }
 
-/** 开发环境调试句柄（生产构建会被 tree-shake 掉） */
-export interface NebulaDebug {
-  camera: THREE.PerspectiveCamera
-  rig: { x: number; y: number; z: number; fov: number; roll: number }
-  scene: THREE.Scene
-  active: () => number
-  worlds: () => { id: string; index: number; visible: boolean }[]
-  renderer: THREE.WebGLRenderer
-}
-
-declare global {
-  interface Window {
-    __nebula?: NebulaDebug
-  }
-}
+/** 开发环境调试句柄见 @/shared/three/debug（多 Demo 共用同一份 Window 声明） */
+export type { ExperienceDebug } from '@/shared/three/debug'
 
 /**
  * 场景管理器 —— 单渲染器 / 单场景 / 单相机，
@@ -142,6 +130,7 @@ export class SceneManager {
         scene: this.scene,
         renderer: this.renderer,
         active: () => this.activeIndex,
+        instances: () => [...this.worlds.values()],
         worlds: () =>
           [...this.worlds.entries()].map(([index, world]) => ({
             id: world.id,

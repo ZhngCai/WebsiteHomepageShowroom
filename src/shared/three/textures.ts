@@ -81,14 +81,31 @@ export function createTextTexture(text: string, options: { size?: number; color?
 }
 
 /**
- * 巨幅标题纹理 —— 用于 Hero 的「巨大 3D 文字」：
- * 宽高比可变，透明底，直接贴在 3D 平面上。
+ * 巨幅标题纹理 —— 用于 Hero 的「巨大 3D 文字」。
+ * 先测量文字宽度再定稿画布尺寸，因此画布宽高比与文字一致，贴在 3D 平面上不会裁切或留大片空白。
  */
 export function createTitleTexture(
   lines: string[],
-  options: { width?: number; height?: number; color?: string; accent?: string; letterSpacing?: string } = {},
+  options: { color?: string; accent?: string; letterSpacing?: string; fontSize?: number } = {},
 ) {
-  const { width = 2048, height = 768, color = '#ffffff', accent = '#7c5cff', letterSpacing = '0.08em' } = options
+  const { color = '#ffffff', accent = '#7c5cff', letterSpacing = '0.1em', fontSize = 560 } = options
+  const font = `600 ${fontSize}px Inter, "PingFang SC", sans-serif`
+
+  const probe = document.createElement('canvas').getContext('2d')
+  if (!probe) throw new Error('[textures] 2D 上下文不可用')
+
+  const applySpacing = (ctx: CanvasRenderingContext2D) => {
+    const spacing = ctx as CanvasRenderingContext2D & { letterSpacing?: string }
+    if (spacing.letterSpacing !== undefined) spacing.letterSpacing = letterSpacing
+  }
+
+  probe.font = font
+  applySpacing(probe)
+
+  const widest = Math.max(1, ...lines.map((line) => probe.measureText(line).width))
+  const width = Math.ceil(widest * 1.16)
+  const height = Math.ceil(fontSize * (lines.length * 1.3) * 1.12)
+
   const canvas = document.createElement('canvas')
   canvas.width = width
   canvas.height = height
@@ -96,22 +113,16 @@ export function createTitleTexture(
   if (!ctx) throw new Error('[textures] 2D 上下文不可用')
 
   ctx.clearRect(0, 0, width, height)
+  ctx.font = font
+  applySpacing(ctx)
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
-
-  const fontSize = Math.floor(height / (lines.length * 1.28))
-  ctx.font = `600 ${fontSize}px Inter, "PingFang SC", sans-serif`
-
-  // letterSpacing 为较新的 Canvas2D 属性，老浏览器下静默跳过
-  const spacing = ctx as CanvasRenderingContext2D & { letterSpacing?: string }
-  if (spacing.letterSpacing !== undefined) spacing.letterSpacing = letterSpacing
-
   ctx.shadowColor = accent
-  ctx.shadowBlur = fontSize * 0.5
+  ctx.shadowBlur = fontSize * 0.42
 
   lines.forEach((line, index) => {
-    const y = height / 2 + (index - (lines.length - 1) / 2) * fontSize * 1.28
-    const gradient = ctx.createLinearGradient(0, y - fontSize / 2, 0, y + fontSize / 2)
+    const y = height / 2 + (index - (lines.length - 1) / 2) * fontSize * 1.3
+    const gradient = ctx.createLinearGradient(0, y - fontSize * 0.6, 0, y + fontSize * 0.6)
     gradient.addColorStop(0, color)
     gradient.addColorStop(1, accent)
     ctx.fillStyle = gradient

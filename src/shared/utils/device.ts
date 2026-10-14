@@ -16,6 +16,10 @@ export interface QualityProfile {
   neuralEdges: number
   flowParticles: number
   singularityParticles: number
+  /** Future Experience Demo */
+  heroParticles: number
+  floatingObjects: number
+  endingParticles: number
 }
 
 const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier'>> = {
@@ -30,6 +34,9 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier'>> = {
     neuralEdges: 2200,
     flowParticles: 700,
     singularityParticles: 9000,
+    heroParticles: 13000,
+    floatingObjects: 44,
+    endingParticles: 9000,
   },
   medium: {
     dpr: 1.6,
@@ -42,6 +49,9 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier'>> = {
     neuralEdges: 1500,
     flowParticles: 420,
     singularityParticles: 5200,
+    heroParticles: 7000,
+    floatingObjects: 28,
+    endingParticles: 5200,
   },
   low: {
     dpr: 1.25,
@@ -54,6 +64,9 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier'>> = {
     neuralEdges: 900,
     flowParticles: 220,
     singularityParticles: 2600,
+    heroParticles: 3600,
+    floatingObjects: 16,
+    endingParticles: 2600,
   },
 }
 

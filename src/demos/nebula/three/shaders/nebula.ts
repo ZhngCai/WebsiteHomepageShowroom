@@ -1,4 +1,4 @@
-import { GLSL_HASH, GLSL_POINT_MASK } from './common'
+import { GLSL_HASH, GLSL_POINT_MASK } from '@/shared/shaders/common'
 
 /** 星云粒子：聚合 / 流场漂移 / 穿越加速 / 分层视差 */
 export const NEBULA_PARTICLE_VERT = /* glsl */ `
