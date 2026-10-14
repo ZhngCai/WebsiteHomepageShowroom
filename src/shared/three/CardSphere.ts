@@ -171,6 +171,8 @@ export function createCardSphere(options: CardSphereOptions) {
   let dragDistance = 0
   let pointerDirty = false
   let listening = false
+  /** 外部透明度系数（章节飞离淡出用），与 gatherIn 的 opacity 相乘 */
+  let externalOpacity = 1
 
   // 供 GSAP 补间的纯数值状态（避免直接 tween 对象内部结构）
   const state = { focusT: 0, gather: 0, opacity: 0 }
@@ -366,10 +368,10 @@ export function createCardSphere(options: CardSphereOptions) {
 
       material.uniforms.uTime.value = ctx.time
       material.uniforms.uGather.value = state.gather
-      material.uniforms.uOpacity.value = state.opacity
+      material.uniforms.uOpacity.value = state.opacity * externalOpacity
       material.uniforms.uScatter.value = scatter
       focusMaterial.uniforms.uTime.value = ctx.time
-      focusMaterial.uniforms.uOpacity.value = state.opacity
+      focusMaterial.uniforms.uOpacity.value = state.opacity * externalOpacity
 
       // 自动旋转 + 拖动惯性
       velocity.multiplyScalar(dragging ? 1 : 0.94)
@@ -398,6 +400,14 @@ export function createCardSphere(options: CardSphereOptions) {
     setScatter(value: number) {
       scatter = value
     },
+    /**
+     * 章节飞离淡出：外部透明度系数（0~1）。
+     * 必须由宿主世界按自身滚动进度传入，否则相机会在「已经进入下一章节」时
+     * 仍然停留在球体内部，导致卡片压住下一个章节的画面。
+     */
+    setOpacity(value: number) {
+      externalOpacity = Math.min(1, Math.max(0, value))
+    },
     /** 开发调试：暴露内部状态（供 CDP 探针读取） */
     debug() {
       return {
@@ -409,6 +419,9 @@ export function createCardSphere(options: CardSphereOptions) {
         focusState,
         hovered,
         focused,
+        dragging,
+        dragDistance,
+        externalOpacity,
         raycast: debugRaycast,
         matrixWorld: group.matrixWorld.elements.slice(12, 15).map((v) => Math.round(v)),
       }

@@ -4,6 +4,7 @@ export const FLOATING_VERT = /* glsl */ `
 varying vec3 vNormal;
 varying vec3 vViewDir;
 varying vec3 vLocal;
+varying float vDepth;
 
 void main() {
   vLocal = position;
@@ -11,6 +12,7 @@ void main() {
 
   vec4 mv = modelViewMatrix * vec4(position, 1.0);
   vViewDir = normalize(-mv.xyz);
+  vDepth = -mv.z;
 
   gl_Position = projectionMatrix * mv;
 }
@@ -25,6 +27,7 @@ uniform float uTime;
 varying vec3 vNormal;
 varying vec3 vViewDir;
 varying vec3 vLocal;
+varying float vDepth;
 
 void main() {
   float facing = abs(dot(normalize(vNormal), normalize(vViewDir)));
@@ -33,8 +36,11 @@ void main() {
   // 表面缓慢流动的纹理带
   float band = 0.5 + 0.5 * sin(vLocal.y * 2.4 + uTime * 0.4);
 
+  // 距离淡出：否则相机还停在 AI 神经网络时，漂浮物就会以「碎屑」形态飘进画面
+  float distanceFade = 1.0 - smoothstep(180.0, 620.0, vDepth);
+
   vec3 color = mix(uColorA, uColorB, fresnel) * (0.34 + band * 0.26 + fresnel * 1.35);
-  float alpha = clamp(uOpacity * (0.42 + fresnel * 0.58), 0.0, 1.0);
+  float alpha = clamp(uOpacity * (0.42 + fresnel * 0.58) * distanceFade, 0.0, 1.0);
 
   gl_FragColor = vec4(color, alpha);
   #include <colorspace_fragment>

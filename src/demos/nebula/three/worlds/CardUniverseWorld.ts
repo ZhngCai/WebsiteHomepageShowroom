@@ -1,7 +1,7 @@
 import { createCardSphere } from '@/shared/three/CardSphere'
 import type { QualityProfile } from '@/shared/utils/device'
 import { worldZ } from '../scene'
-import { BaseWorld, type FrameContext } from '../World'
+import { BaseWorld, exitFade, type FrameContext } from '../World'
 import { CARD_CLOSE_EVENT, emitCardClose, emitCardFocus } from '../../utils/events'
 
 const PALETTES = ['Ultraviolet', 'Aurora', 'Ember', 'Abyss', 'Neon Bloom', 'Ion', 'Solar Dust', 'Void']
@@ -66,6 +66,9 @@ export class CardUniverseWorld extends BaseWorld {
   }
 
   update(ctx: FrameContext) {
+    // 飞离淡出：相机在「无限画廊」章节初段仍停在球体内部，
+    // 必须按本章节进度主动淡出，否则卡片会压住下一个章节的画面
+    this.sphere?.setOpacity(exitFade(this.progress))
     this.sphere?.update({ time: ctx.time, delta: ctx.delta, camera: ctx.camera })
   }
 

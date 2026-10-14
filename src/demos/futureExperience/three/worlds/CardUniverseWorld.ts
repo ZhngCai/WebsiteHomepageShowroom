@@ -3,7 +3,7 @@ import type { QualityProfile } from '@/shared/utils/device'
 import { cardContent } from '../../utils/cards'
 import { CARD_CLOSE_EVENT, emitCardClose, emitCardFocus } from '../../utils/events'
 import { worldZ } from '../Camera'
-import { BaseWorld, type FrameContext } from '../World'
+import { BaseWorld, exitFade, type FrameContext } from '../World'
 
 /**
  * 02 Card Universe —— 100+ 张图片卡片的球体。
@@ -16,6 +16,7 @@ export class CardUniverseWorld extends BaseWorld {
 
   private readonly quality: QualityProfile
   private sphere: ReturnType<typeof createCardSphere> | null = null
+  private progress = 0
 
   constructor(quality: QualityProfile) {
     super()
@@ -48,10 +49,14 @@ export class CardUniverseWorld extends BaseWorld {
   }
 
   setProgress(progress: number) {
+    this.progress = progress
     this.sphere?.setScatter(progress)
   }
 
   update(ctx: FrameContext) {
+    // 飞离淡出：相机在「产品瀑布」章节初段仍停在球体内部，
+    // 必须按本章节进度主动淡出，否则卡片会压住下一个章节的画面
+    this.sphere?.setOpacity(exitFade(this.progress))
     this.sphere?.update({ time: ctx.time, delta: ctx.delta, camera: ctx.camera })
   }
 

@@ -76,8 +76,10 @@ export const cameraPlans: CameraPlan[] = [
     explore: rig({ z: worldZ(1) + 88, tz: worldZ(1), fov: 46 }),
   },
   // 03 AI Neural World：从网络外部推进到内部
+  // 到达机位刻意拉远到 720：网络的距离淡出延伸到 600 单位，
+  // 若到达机位只有 300，相机在「产品瀑布」章节就会提前看到网络，出场位置就错了
   {
-    arrival: rig({ z: worldZ(2) + 300, tz: worldZ(2), fov: 58 }),
+    arrival: rig({ z: worldZ(2) + 720, tz: worldZ(2), fov: 58 }),
     explore: rig({ z: worldZ(2) + 84, tz: worldZ(2) - 70, fov: 72 }),
   },
   // 04 Floating Objects：侧向游走，像在展览馆中穿行
