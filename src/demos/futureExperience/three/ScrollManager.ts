@@ -40,6 +40,7 @@ export class ScrollManager {
 
   private anchors: WorldAnchor[] = []
   private activeWorld = -1
+  private activeSection = -1
   private maxScroll = 1
 
   constructor({ container, scene, onActive, onReady }: ScrollManagerOptions) {
@@ -210,7 +211,7 @@ export class ScrollManager {
     this.measure()
   }
 
-  /** 滚动 → 场景：全局进度 / 速度 / 激活世界 */
+  /** 滚动 → 场景：全局进度 / 速度 / 激活世界与激活 Section */
   private update = () => {
     const vh = Math.max(1, window.innerHeight)
     const scroll = window.scrollY
@@ -220,9 +221,23 @@ export class ScrollManager {
     this.scene.setVelocity(clamp(Math.abs(this.lenis.velocity) / 40, 0, 1))
 
     const center = scroll + vh * 0.5
+
+    // 导航高亮：以「视口中心落在哪个 Section」为准（8 个 Section 全参与）
+    let activeSection = 0
+    for (let index = 0; index < this.sections.length; index++) {
+      const section = this.sections[index]
+      const top = section.offsetTop
+      if (center >= top) activeSection = index
+    }
+
+    if (activeSection !== this.activeSection) {
+      this.activeSection = activeSection
+      this.onActive?.(activeSection)
+    }
+
+    // 3D 世界激活：取离视口中心最近的 3D 章节锚点
     let best = this.anchors[0]
     let bestDistance = Infinity
-
     for (const anchor of this.anchors) {
       const distance = Math.abs(center - anchor.center)
       if (distance < bestDistance) {
@@ -234,7 +249,6 @@ export class ScrollManager {
     if (best && best.world !== this.activeWorld) {
       this.activeWorld = best.world
       this.scene.setActive(best.world)
-      this.onActive?.(best.sectionIndex)
     }
   }
 }

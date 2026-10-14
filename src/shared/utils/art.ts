@@ -46,12 +46,14 @@ export function paintArt(ctx: CanvasRenderingContext2D, x: number, y: number, si
   ctx.fillStyle = bg
   ctx.fillRect(0, 0, size, size)
 
+  // 底色渐变
   const base = ctx.createLinearGradient(0, 0, size, size)
   base.addColorStop(0, `${c1}${random() > 0.5 ? 'aa' : '88'}`)
   base.addColorStop(1, `${c2}55`)
   ctx.fillStyle = base
   ctx.fillRect(0, 0, size, size)
 
+  // 柔光团
   const blobs = 3 + Math.floor(random() * 4)
   for (let i = 0; i < blobs; i++) {
     const radius = size * (0.12 + random() * 0.4)
@@ -65,26 +67,69 @@ export function paintArt(ctx: CanvasRenderingContext2D, x: number, y: number, si
     ctx.fillRect(0, 0, size, size)
   }
 
-  ctx.globalAlpha = 0.28
+  // 结构：细密排线（放大后仍然有细节）
+  ctx.globalAlpha = 0.16
   ctx.strokeStyle = '#ffffff'
-  ctx.lineWidth = 1
-  const lines = 4 + Math.floor(random() * 8)
+  ctx.lineWidth = Math.max(1, size * 0.0016)
+  const lines = 26 + Math.floor(random() * 26)
   for (let i = 0; i < lines; i++) {
     ctx.beginPath()
-    const ly = (i / lines) * size + random() * 6
+    const ly = (i / lines) * size + random() * size * 0.01
     ctx.moveTo(0, ly)
-    ctx.lineTo(size, ly + (random() - 0.5) * 24)
+    ctx.lineTo(size, ly + (random() - 0.5) * size * 0.06)
     ctx.stroke()
   }
 
-  if (random() > 0.55) {
-    ctx.globalAlpha = 0.5
+  // 结构：少量几何体
+  ctx.globalAlpha = 0.14
+  const shapes = 2 + Math.floor(random() * 3)
+  for (let i = 0; i < shapes; i++) {
+    const w = size * (0.16 + random() * 0.34)
+    const h = size * (0.08 + random() * 0.3)
+    ctx.save()
+    ctx.translate(random() * size, random() * size)
+    ctx.rotate((random() - 0.5) * 0.7)
+    ctx.fillStyle = random() > 0.5 ? c2 : c1
+    if (random() > 0.5) {
+      ctx.fillRect(-w / 2, -h / 2, w, h)
+    } else {
+      ctx.beginPath()
+      ctx.moveTo(-w / 2, h / 2)
+      ctx.lineTo(0, -h / 2)
+      ctx.lineTo(w / 2, h / 2)
+      ctx.closePath()
+      ctx.fill()
+    }
+    ctx.restore()
+  }
+
+  // 环
+  if (random() > 0.5) {
+    ctx.globalAlpha = 0.42
     ctx.strokeStyle = c2
-    ctx.lineWidth = size * 0.02
+    ctx.lineWidth = size * 0.018
     ctx.beginPath()
     ctx.arc(size / 2, size / 2, size * (0.2 + random() * 0.16), 0, Math.PI * 2)
     ctx.stroke()
   }
+
+  // 颗粒感
+  ctx.globalAlpha = 0.1
+  ctx.fillStyle = '#ffffff'
+  const grains = Math.floor(size * 1.4)
+  for (let i = 0; i < grains; i++) {
+    const gx = random() * size
+    const gy = random() * size
+    ctx.fillRect(gx, gy, 1, 1)
+  }
+
+  // 暗角，让画面更有摄影感
+  ctx.globalAlpha = 1
+  const vignette = ctx.createRadialGradient(size / 2, size / 2, size * 0.2, size / 2, size / 2, size * 0.78)
+  vignette.addColorStop(0, 'rgba(0,0,0,0)')
+  vignette.addColorStop(1, 'rgba(0,0,0,0.55)')
+  ctx.fillStyle = vignette
+  ctx.fillRect(0, 0, size, size)
 
   ctx.restore()
 }
