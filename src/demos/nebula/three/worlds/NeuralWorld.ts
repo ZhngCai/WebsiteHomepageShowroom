@@ -10,7 +10,7 @@ import {
   NEURAL_LINE_VERT,
   NEURAL_NODE_FRAG,
   NEURAL_NODE_VERT,
-} from '../shaders/neural'
+} from '@/shared/shaders/neural'
 import { BaseWorld, exitFade, type FrameContext } from '../World'
 
 const GOLDEN = Math.PI * (3 - Math.sqrt(5))

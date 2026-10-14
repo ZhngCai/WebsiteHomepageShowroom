@@ -67,6 +67,11 @@ export class ScrollManager {
     ScrollTrigger.addEventListener('refresh', this.onRefresh)
     this.update()
 
+    if (import.meta.env.DEV) {
+      // 开发调试：暴露 ScrollTrigger 便于检查区间与刷新状态
+      ;(window as Window & { __st?: typeof ScrollTrigger }).__st = ScrollTrigger
+    }
+
     ScrollTrigger.refresh()
     requestAnimationFrame(() => onReady?.())
   }
@@ -165,12 +170,8 @@ export class ScrollManager {
       const section = this.sections[anchor.sectionIndex]
       const trigger = ScrollTrigger.create({
         trigger: section,
-        // 区间必须等于「本章节占据滚动距离」：
-        // start=章节顶部对齐视口顶部；end=章节底部对齐视口顶部。
-        // 若写成 'bottom bottom'，对恰好 100vh 的章节区间长度为 0，进度会瞬间跳到 1。
-        start: 'top top',
-        end: 'bottom top',
-        onUpdate: (self) => this.scene.setSectionProgress(anchor.world, self.progress),
+        start: 'top 55%',
+        end: 'bottom 45%',
         onToggle: (self) => {
           section.dataset.entered = self.isActive ? 'true' : 'false'
         },
@@ -211,7 +212,7 @@ export class ScrollManager {
     this.measure()
   }
 
-  /** 滚动 → 场景：全局进度 / 速度 / 激活世界与激活 Section */
+  /** 滚动 → 场景：全局进度 / 速度 / 各章节进度 / 激活世界与激活 Section */
   private update = () => {
     const vh = Math.max(1, window.innerHeight)
     const scroll = window.scrollY
@@ -219,6 +220,14 @@ export class ScrollManager {
 
     this.scene.setGlobalProgress(clamp(scroll / this.maxScroll, 0, 1))
     this.scene.setVelocity(clamp(Math.abs(this.lenis.velocity) / 40, 0, 1))
+
+    // 章节进度直接用实时布局计算：与激活世界的锚点解析同源，
+    // 不依赖 ScrollTrigger 的区间推算（pin / 动态高度下更稳）
+    for (const anchor of this.anchors) {
+      const section = this.sections[anchor.sectionIndex]
+      const height = Math.max(1, section.offsetHeight)
+      this.scene.setSectionProgress(anchor.world, clamp((scroll - section.offsetTop) / height, 0, 1))
+    }
 
     const center = scroll + vh * 0.5
 
