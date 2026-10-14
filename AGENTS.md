@@ -8,6 +8,11 @@ npm run typecheck   # 仅类型检查
 npm run dev         # 本地开发（默认 5173，可用 -- --port <n> 指定）
 ```
 
+## 开发工具
+
+- `code-inspector-plugin`（仅 dev）：`Option/Alt + Shift + 左键点击`页面元素 → 跳转 IDE 源码；`+ 右键` 查看节点树。
+  只在 `vite serve` 挂载，生产构建不注入代码。若与浏览器/系统快捷键冲突，改 `vite.config.ts` 中的 `hotKeys`。
+
 ## 约定
 
 - 使用 `.devin/` 存放新增的 agent 配置；不要写入 `.claude/`、`.cursor/` 等目录。

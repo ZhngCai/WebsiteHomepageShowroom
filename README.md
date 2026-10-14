@@ -32,6 +32,13 @@ npm run preview    # 预览构建产物
 npm run typecheck  # 仅类型检查
 ```
 
+### 点击浏览器元素跳转源码（code-inspector-plugin）
+
+开发环境下按住 **`Option`（Windows 为 `Alt`）+ `Shift` + 左键点击** 页面任意元素，即可在 IDE 中打开对应源码位置（`Option/Alt + Shift + 右键` 查看节点树）；页面左下角也有功能开关。
+
+- 仅在 `vite serve` 阶段挂载，生产构建不注入任何相关代码（已实测 `dist/` 中无 `data-insp-path`）。
+- 配置见 <ref_file file="/Applications/my/git/炫酷的官网首页/vite.config.ts" />，客户端界面语言设为中文。
+
 ---
 
 ## 目录结构
