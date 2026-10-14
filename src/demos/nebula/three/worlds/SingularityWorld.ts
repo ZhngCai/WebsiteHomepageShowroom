@@ -8,7 +8,7 @@ import {
   ORB_VERT,
   SINGULARITY_PARTICLE_FRAG,
   SINGULARITY_PARTICLE_VERT,
-} from '../shaders/singularity'
+} from '@/shared/shaders/singularity'
 import { BaseWorld, type FrameContext } from '../World'
 import { emitSingularityBurst } from '../../utils/events'
 

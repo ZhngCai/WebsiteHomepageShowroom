@@ -222,11 +222,14 @@ export class ScrollManager {
     this.scene.setVelocity(clamp(Math.abs(this.lenis.velocity) / 40, 0, 1))
 
     // 章节进度直接用实时布局计算：与激活世界的锚点解析同源，
-    // 不依赖 ScrollTrigger 的区间推算（pin / 动态高度下更稳）
+    // 不依赖 ScrollTrigger 的区间推算（pin / 动态高度下更稳）。
+    // 口径：章节自身的「可滚动距离」——高于一屏的章节扣除一屏高度，
+    // 否则末章（170vh）的进度永远到不了 1，爆炸等收尾动画无法触发。
     for (const anchor of this.anchors) {
       const section = this.sections[anchor.sectionIndex]
       const height = Math.max(1, section.offsetHeight)
-      this.scene.setSectionProgress(anchor.world, clamp((scroll - section.offsetTop) / height, 0, 1))
+      const range = Math.max(1, height > vh ? height - vh : height)
+      this.scene.setSectionProgress(anchor.world, clamp((scroll - section.offsetTop) / range, 0, 1))
     }
 
     const center = scroll + vh * 0.5

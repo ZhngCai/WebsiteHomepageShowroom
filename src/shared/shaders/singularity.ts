@@ -44,6 +44,7 @@ export const SINGULARITY_PARTICLE_FRAG = /* glsl */ `
 uniform vec3 uColorParticle;
 uniform vec3 uColorCard;
 uniform vec3 uColorNode;
+uniform vec3 uColorFloat;
 uniform float uMorph;
 
 varying float vAlpha;
@@ -59,7 +60,11 @@ void main() {
   float mask = pointMask(gl_PointCoord, 0.4);
   if (mask <= 0.003) discard;
 
-  vec3 color = vKind < 0.5 ? uColorParticle : (vKind < 1.5 ? uColorCard : uColorNode);
+  vec3 color = uColorParticle;
+  if (vKind > 0.5) color = uColorCard;
+  if (vKind > 1.5) color = uColorNode;
+  if (vKind > 2.5) color = uColorFloat;
+
   // 聚合后整体趋近白热
   color = mix(color, vec3(1.0), uMorph * 0.55);
 

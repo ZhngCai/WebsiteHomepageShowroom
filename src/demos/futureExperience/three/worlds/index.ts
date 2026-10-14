@@ -5,6 +5,7 @@
 import { getQuality } from '@/shared/utils/device'
 import type { WorldFactory } from '../SceneManager'
 import { CardUniverseWorld } from './CardUniverseWorld'
+import { EndingWorld } from './EndingWorld'
 import { FloatingWorld } from './FloatingWorld'
 import { HeroWorld } from './HeroWorld'
 import { NeuralWorld } from './NeuralWorld'
@@ -17,5 +18,6 @@ export function createWorldFactories(): WorldFactory[] {
     () => new CardUniverseWorld(quality),
     () => new NeuralWorld(quality),
     () => new FloatingWorld(quality),
+    () => new EndingWorld(quality),
   ]
 }
