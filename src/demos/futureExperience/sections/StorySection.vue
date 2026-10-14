@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { createArtDataUrl } from '@/shared/utils/art'
 import { useSectionEffect } from '../utils/sectionEffect'
-import { gsap, ScrollTrigger } from '../three/Animation'
+import { gsap } from '../three/Animation'
 
 defineProps<{ index: number }>()
 
@@ -27,13 +27,11 @@ const root = useSectionEffect((section) => {
   const line = section.querySelector<HTMLElement>('[data-story-line]')
   const rows = [...section.querySelectorAll<HTMLElement>('[data-story-row]')]
 
-  const triggers: ScrollTrigger[] = []
   const tweens: ReturnType<typeof gsap.fromTo>[] = []
 
   // 「文字固定」用 CSS sticky 实现（.fe-story__text）。
   // 说明：GSAP pin 会注入 pin-spacer 并改变 grid 布局，解除后文字位置会漂移；
   // sticky 视觉等价且不干扰布局，滚动动画仍全部由 GSAP ScrollTrigger 驱动。
-  void triggers
 
   // 主图：视差 + 缓慢放大（scrub 跟随滚动）
   if (media) {
@@ -101,7 +99,6 @@ const root = useSectionEffect((section) => {
   }
 
   return () => {
-    for (const trigger of triggers) trigger.kill()
     for (const tween of tweens) {
       tween.scrollTrigger?.kill()
       tween.kill()

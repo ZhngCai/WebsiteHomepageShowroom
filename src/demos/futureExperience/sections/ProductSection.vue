@@ -23,7 +23,6 @@ const root = useSectionEffect((section) => {
   const head = section.querySelector<HTMLElement>('[data-timeline-head]')
   if (!track) return
 
-  const triggers: ScrollTrigger[] = []
   const tweens: ReturnType<typeof gsap.fromTo>[] = []
 
   // 垂直滚动 → 水平展开：pin 住整节，横向平移轨道
@@ -85,7 +84,6 @@ const root = useSectionEffect((section) => {
   }
 
   return () => {
-    for (const trigger of triggers) trigger.kill()
     for (const tween of tweens) {
       tween.scrollTrigger?.kill()
       tween.kill()

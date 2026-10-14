@@ -2,7 +2,10 @@
 
 Vue3 + TypeScript + Three.js 打造的高端 WebGL 体验集合。每个 Demo 独立运行、独立场景、独立生命周期 —— **进入即创建，离开即销毁**。
 
-核心体验（`/demo/nebula`）：**Scroll = Camera Movement**，滚动即前进，六屏六世界。
+| Demo | 路由 | 核心体验 |
+| --- | --- | --- |
+| **Future Experience** | `/demo/future-experience` | 8 个 Section（4 全屏 + 4 非全屏），每个 Section 拥有完全不同的滚动效果 |
+| **Nebula Odyssey** | `/demo/nebula` | 6 屏六世界，Scroll = Camera Movement |
 
 ---
 
@@ -43,35 +46,54 @@ src/
 ├── demos/
 │   ├── registry.ts             # ★ Demo 注册表：新增 Demo 的唯一入口
 │   ├── gallery/                # 首页 Demo 展示大厅
-│   └── nebula/                 # 六屏沉浸式体验（本项目核心）
-│       ├── App.vue             # Demo 入口：Loading / Navbar / 场景 / 滚动容器
-│       ├── style.css
-│       ├── components/
-│       │   ├── MainScene.vue   # 固定全屏 canvas + 场景与滚动编排
-│       │   ├── ScrollContainer.vue  # 6 屏 + 终章空间
-│       │   └── SectionShell.vue     # 章节版式（统一进出场标记）
-│       ├── sections/           # 六屏 DOM 层（HeroNebula / TimeWarp / …）
-│       ├── three/
-│       │   ├── SceneManager.ts # 单渲染器/单场景/单相机 + 世界生命周期
-│       │   ├── ScrollManager.ts# Lenis + ScrollTrigger + 镜头时间轴 + snap
-│       │   ├── cameraPath.ts   # 六段镜头脚本（到达机位 / 穿越机位）
-│       │   ├── World.ts        # 世界接口 + 资源销毁
-│       │   ├── particles.ts    # 星云粒子系统
-│       │   ├── shaders/        # GLSL：星云 / 时间环 / 卡片 / 画廊 / 神经 / 奇点
-│       │   └── worlds/         # 六个世界（各自独立，互不引用）
-│       └── utils/
-│           ├── scroll.ts       # Lenis 工厂 + ScrollTrigger 注册
-│           ├── context.ts      # 注入键与章节元数据
-│           └── events.ts       # three ↔ DOM 的事件契约
+│   ├── futureExperience/       # ★ 8 章节高级品牌官网（Future Experience）
+│   │   ├── App.vue
+│   │   ├── components/         # MainScene / ScrollContainer / SectionHeading
+│   │   ├── sections/           # 8 个 Section（各自独立滚动效果）
+│   │   ├── three/
+│   │   │   ├── SceneManager.ts # 单渲染器/单场景/单相机 + 世界生命周期
+│   │   │   ├── Camera.ts       # 相机装配 + 5 段镜头脚本
+│   │   │   ├── Renderer.ts     # 渲染器与自适应分辨率
+│   │   │   ├── Animation.ts    # GSAP 注册、统一缓动与进出场
+│   │   │   ├── ScrollManager.ts# Lenis + ScrollTrigger + 章节进度与激活世界
+│   │   │   ├── World.ts        # 世界接口 / 资源销毁 / 飞离淡出
+│   │   │   └── worlds/         # hero / cards / ai / floating / ending
+│   │   ├── shaders/            # hero / floating 专用 GLSL
+│   │   └── utils/              # scroll / sectionEffect / events / cards
+│   └── nebula/                 # 六屏沉浸式体验（Nebula Odyssey）
 └── shared/
     ├── Loading.vue / Navbar.vue / Cursor.vue / Transition.vue
-    ├── three/textures.ts       # 程序化艺术图集 / 光晕 / 文字精灵
-    └── utils/device.ts         # 设备档位探测与 GPU 预算
+    ├── shaders/                # card / neural / singularity / common（跨 Demo 共用 GLSL）
+    ├── three/
+    │   ├── CardSphere.ts       # 卡片球（球面排列 + 拖动/hover/点击飞出）
+    │   ├── Starfield.ts        # 远景星尘
+    │   ├── textures.ts         # 程序化艺术图集 / 光晕 / 文字 / 标题纹理
+    │   └── debug.ts            # 开发环境 window.__nebula 调试句柄
+    └── utils/
+        ├── art.ts              # 纯 Canvas 艺术图（3D 贴图与 DOM 图片共用）
+        └── device.ts           # 设备档位探测与 GPU 预算
 ```
 
 ---
 
-## 六个世界（`/demo/nebula`）
+## Future Experience（`/demo/future-experience`）
+
+8 个 Section —— 4 个全屏 + 4 个非全屏，**每个 Section 的滚动效果都不同**：
+
+| # | Section | 高度 | 滚动效果 | 关键技术 |
+| --- | --- | --- | --- | --- |
+| 01 | Cosmic Hero | 100vh | 粒子从四周聚合、相机向前推进穿越星云 | Points + 顶点着色器聚合、3D 文字平面 |
+| 02 | Luxury Brand Story | 120vh | 文字固定（sticky）、主图放大 + 小图反向视差 | ScrollTrigger scrub |
+| 03 | 3D Card Universe | 100vh | 球体自转 / 拖动 / hover 放大 / 点击飞出 | InstancedMesh + GSAP Flip + Glass 信息卡 |
+| 04 | Infinite Product Gallery | 内容高度 | 四列瀑布流、列间视差、滚轮速度驱动 3D 倾斜 | ScrollTrigger.getVelocity + ticker 插值 |
+| 05 | AI Neural World | 100vh | 1000 节点从混沌聚成 AI 核心、相机进入网络 | BufferGeometry + 自定义 Shader |
+| 06 | Horizontal Timeline | 200vh | 垂直滚动转水平展开（pin 整节） | ScrollTrigger pin + scrub |
+| 07 | Floating Objects | 内容高度 | 物体漂浮、滚动驱动旋转、鼠标磁吸 | 射线磁力线 + 菲涅尔材质 |
+| 08 | Singularity Ending | 170vh（内容 sticky 100vh） | 四类元素聚合为能量球 → 爆炸 → CREATE THE FUTURE | 共享 singularity 着色器 + 相机余震 |
+
+---
+
+## Nebula Odyssey（`/demo/nebula`）
 
 | # | 世界 | 视觉 | 关键技术 |
 | --- | --- | --- | --- |

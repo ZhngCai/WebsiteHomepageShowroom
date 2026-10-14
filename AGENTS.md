@@ -19,8 +19,24 @@ npm run dev         # 本地开发（默认 5173，可用 -- --port <n> 指定�
 
 ## 手工验收路径
 
-1. `npm run dev` → 打开 `/`：Demo 大厅渲染正常，点击 Nebula Odyssey 进入。
-2. `/demo/nebula`：Loading 淡出 → 粒子聚合 → 逐屏滚动（每屏自动吸附）。
-3. 第 3 屏：拖动旋转、悬停放大、点击卡片飞出并展开玻璃信息卡（Esc 关闭）。
-4. 第 6 屏与终章：光球聚合 → 爆炸闪光 → `ENTER THE FUTURE` 出现。
-5. 控制台无报错；`?quality=low` 可验证移动端降级路径。
+1. `npm run dev` → 打开 `/`：Demo 大厅渲染正常，点击 Future Experience / Nebula Odyssey 进入。
+2. `/demo/future-experience`：Loading 淡出 → Hero 粒子聚合与 3D 文字 → 逐屏滚动经过 8 个章节，
+   每节效果不同（文字固定、卡片球、瀑布倾斜、AI 核心、横向时间轴、漂浮磁吸）。
+3. 第 3 节：拖动旋转、悬停放大、点击卡片飞出并展开 Glass 信息卡（含 Title/Quote/Date/Location/Tags/语言切换，Esc 关闭）。
+4. 第 6 节：垂直滚动转换为水平时间轴（整节被 pin）。
+5. 第 8 节与终章：能量球聚合 → 爆炸闪光 → `CREATE THE FUTURE` 浮现。
+6. `/demo/nebula`：Loading 淡出 → 粒子聚合 → 逐屏滚动（每屏自动吸附）。
+7. 第 3 屏：拖动旋转、悬停放大、点击卡片飞出并展开玻璃信息卡（Esc 关闭）。
+8. 第 6 屏与终章：光球聚合 → 爆炸闪光 → `ENTER THE FUTURE` 出现。
+9. 控制台无报错；`?quality=low` 可验证移动端降级路径。
+
+## 调试开关
+
+| 参数 | 作用 |
+| --- | --- |
+| `?nosnap` | 关闭滚动吸附（仅 nebula），便于逐帧检查中间态 |
+| `?adaptive=0` | 关闭自适应分辨率（固定 DPR，便于截图对比） |
+| `?quality=low\|medium\|high` | 强制 GPU 预算档位 |
+
+开发环境 `window.__nebula` 暴露 `camera / rig / scene / active() / worlds() / instances()`；
+future-experience 额外暴露 `window.__st`（ScrollTrigger）用于检查区间与刷新状态。
