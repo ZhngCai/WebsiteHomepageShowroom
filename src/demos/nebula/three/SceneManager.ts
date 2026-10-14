@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import gsap from 'gsap'
-import { createAmbientStars } from './AmbientStars'
+import { createStarfield } from '@/shared/three/Starfield'
 import { applyCameraRig, createCamera, createCameraRig } from './camera'
 import { createRenderer, resizeRenderer } from './renderer'
 import { createScene } from './scene'
@@ -43,7 +43,7 @@ export class SceneManager {
   readonly pointer = new THREE.Vector2()
 
   private readonly canvas: HTMLCanvasElement
-  private readonly stars: ReturnType<typeof createAmbientStars>
+  private readonly stars: ReturnType<typeof createStarfield>
   private readonly pointerTarget = new THREE.Vector2()
   private readonly factories: WorldFactory[] = []
   private readonly worlds = new Map<number, World>()
@@ -69,7 +69,12 @@ export class SceneManager {
     this.renderer = createRenderer(canvas, this.quality)
     this.scene = createScene()
     this.camera = createCamera()
-    this.stars = createAmbientStars(this.quality.tier === 'low' ? 900 : 2200)
+    this.stars = createStarfield({
+      count: this.quality.tier === 'low' ? 900 : 2200,
+      size: 3.4,
+      colorA: '#8fa6ff',
+      colorB: '#ffd9f0',
+    })
     this.scene.add(this.stars.group)
   }
 
@@ -190,8 +195,7 @@ export class SceneManager {
 
     applyCameraRig(this.camera, this.rig, this.pointer.x * 1.4, -this.pointer.y * 0.9)
     // 远景星尘跟随相机，飞行途中的空隙始终有星空
-    this.stars.group.position.copy(this.camera.position)
-    this.stars.update(this.elapsed)
+    this.stars.update(this.elapsed, this.camera)
 
     const ctx: FrameContext = {
       time: this.elapsed,

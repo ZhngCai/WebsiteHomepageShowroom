@@ -20,6 +20,28 @@ export interface DemoEntry extends DemoMeta {
 
 export const demos: DemoEntry[] = [
   {
+    name: 'future-experience',
+    title: 'Future Experience',
+    tagline: '高级品牌官网',
+    description:
+      '8 个 Section（4 全屏 + 4 非全屏），每个 Section 拥有完全不同的滚动效果：宇宙粒子推进、品牌故事视差、3D 卡片球、产品瀑布、AI 神经网络、横向时间轴、漂浮空间与奇点终章。',
+    stack: ['Vue3', 'Three.js', 'GSAP', 'Lenis', 'Pinia'],
+    accent: '#d8b26a',
+    cover:
+      'radial-gradient(120% 120% at 78% 12%, #d8b26a44 0%, transparent 46%), linear-gradient(150deg, #12100c 0%, #4a3a1c 48%, #05060c 100%)',
+    sections: [
+      'Cosmic Hero',
+      'Brand Story',
+      'Card Universe',
+      'Product Gallery',
+      'AI Neural',
+      'Timeline',
+      'Floating',
+      'Singularity',
+    ],
+    load: () => import('@/demos/futureExperience/App.vue'),
+  },
+  {
     name: 'nebula',
     title: 'Nebula Odyssey',
     tagline: '未来数字艺术官网',
@@ -27,7 +49,8 @@ export const demos: DemoEntry[] = [
       '滚动即穿越：星云入口 → 时间折叠 → 卡片星球 → 无限画廊 → AI 宇宙 → 奇点。六屏六世界，Scroll = Camera Movement。',
     stack: ['Vue3', 'Three.js', 'GSAP', 'Lenis', 'Shader'],
     accent: '#7c5cff',
-    cover: 'radial-gradient(120% 120% at 20% 10%, #2ee6ff33 0%, transparent 45%), linear-gradient(140deg, #120c2e 0%, #3b1f7a 45%, #05060f 100%)',
+    cover:
+      'radial-gradient(120% 120% at 20% 10%, #2ee6ff33 0%, transparent 45%), linear-gradient(140deg, #120c2e 0%, #3b1f7a 45%, #05060f 100%)',
     sections: ['Nebula Portal', 'Time Warp', 'Card Universe', 'Infinite Gallery', 'AI Universe', 'Singularity'],
     load: () => import('@/demos/nebula/App.vue'),
   },
