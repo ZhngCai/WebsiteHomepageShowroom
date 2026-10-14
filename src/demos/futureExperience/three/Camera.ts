@@ -76,17 +76,17 @@ export const cameraPlans: CameraPlan[] = [
     explore: rig({ z: worldZ(1) + 88, tz: worldZ(1), fov: 46 }),
   },
   // 03 AI Neural World：从网络外部推进到内部
-  // 到达机位刻意拉远到 720：网络的距离淡出延伸到 600 单位，
-  // 若到达机位只有 300，相机在「产品瀑布」章节就会提前看到网络，出场位置就错了
+  // 到达机位 560：网络距离淡出延伸到 600，因此章节起点就能看到网络刚刚浮现（约 5%），
+  // 又不会在「产品瀑布」章节里提前出现；随后相机 560 → 84 真正飞入网络内部
   {
-    arrival: rig({ z: worldZ(2) + 720, tz: worldZ(2), fov: 58 }),
+    arrival: rig({ z: worldZ(2) + 560, tz: worldZ(2), fov: 58 }),
     explore: rig({ z: worldZ(2) + 84, tz: worldZ(2) - 70, fov: 72 }),
   },
   // 04 Floating Objects：侧向游走，像在展览馆中穿行
-  // 到达机位拉到 880：物体壳层半径 46~196、距离淡出延伸到 620，
-  // 若到达机位只有 230，相机在「品牌时间轴」中段就会看到物体淡入
+  // 到达机位 700：物体壳层半径 46~196、距离淡出延伸到 620，
+  // 章节起点即可见约 17% 的物体，又不会在「品牌时间轴」里提前淡入
   {
-    arrival: rig({ z: worldZ(3) + 880, tz: worldZ(3), fov: 56 }),
+    arrival: rig({ z: worldZ(3) + 700, tz: worldZ(3), fov: 56 }),
     explore: rig({ x: -118, y: 42, z: worldZ(3) + 60, tz: worldZ(3), fov: 62, roll: 0.03 }),
   },
   // 05 Singularity Ending：逼近能量球 → 爆炸

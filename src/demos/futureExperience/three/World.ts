@@ -75,12 +75,22 @@ export abstract class BaseWorld implements World {
   protected onLeave() {}
 }
 
-/** 世界在「飞离阶段」平滑退场：进度 0.62 → 0.9 之间淡出，回滚时自动恢复 */
+/**
+ * 相机在本章节内的「穿越结束点」——之后开始飞向下一世界。
+ * 注意：这是相机行为，不要与「世界退场透明度」混用。
+ */
 export const TRAVEL_START = 0.62
-export const TRAVEL_END = 0.9
+
+/**
+ * 世界退场窗口：本节最后 15% 才淡出。
+ * 若沿用相机的 0.62 起点，场景会在章节还剩三分之一时就淡掉、
+ * 章节末尾整场消失（卡片宇宙 / AI 意识空间都踩过这个坑）。
+ */
+export const EXIT_START = 0.85
+export const EXIT_END = 1
 
 export function exitFade(progress: number) {
-  const t = Math.min(1, Math.max(0, (progress - TRAVEL_START) / (TRAVEL_END - TRAVEL_START)))
+  const t = Math.min(1, Math.max(0, (progress - EXIT_START) / (EXIT_END - EXIT_START)))
   return 1 - t * t * (3 - 2 * t)
 }
 
