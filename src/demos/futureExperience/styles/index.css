@@ -32,7 +32,7 @@
 }
 
 .fe-section--cards {
-  height: 100vh;
+  height: 140vh;
 }
 
 .fe-section--gallery {
@@ -40,7 +40,7 @@
 }
 
 .fe-section--ai {
-  height: 100vh;
+  height: 140vh;
 }
 
 .fe-section--timeline {
@@ -48,7 +48,7 @@
 }
 
 .fe-section--floating {
-  min-height: 130vh;
+  min-height: 140vh;
 }
 
 .fe-section--ending {
@@ -70,10 +70,27 @@
   pointer-events: auto;
 }
 
+/*
+ * 卡片宇宙 / AI 意识空间：
+ * 标题在本节内 sticky 常驻，与「漂浮空间」保持一致。
+ * 若沿用绝对定位 + padding-top，标题在章节前 20% 就滚出画面，
+ * 而 3D 场景还要继续 700px 以上 —— 内容与场景的进出位置完全对不上。
+ */
 .fe-layer--cards,
 .fe-layer--ai {
+  position: relative;
+  height: 140vh;
   align-items: flex-start;
-  padding-top: 18vh;
+  padding: 18vh 1.5rem 0;
+}
+
+.fe-layer--cards > :not(.sr-only),
+.fe-layer--ai > :not(.sr-only) {
+  position: sticky;
+  /* 14vh 而非 24vh：sticky 的可用行程 = 章节高 − 视口 − 标题块高 − top，
+     top 取小一些才能让标题在本节内保持到接近末尾 */
+  top: 14vh;
+  max-width: 34rem;
 }
 
 @media (min-width: 768px) {
@@ -115,7 +132,7 @@
 /* ---------- 漂浮空间（非全屏章节：标题在章节内 sticky，3D 物体场在其后滚动） ---------- */
 .fe-floating {
   position: relative;
-  min-height: 130vh;
+  min-height: 140vh;
   padding: 18vh 1.5rem 12vh;
 }
 
@@ -127,7 +144,7 @@
 
 .fe-floating > .fe-heading {
   position: sticky;
-  top: 24vh;
+  top: 14vh;
   max-width: 34rem;
 }
 
