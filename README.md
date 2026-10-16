@@ -4,6 +4,7 @@ Vue3 + TypeScript + Three.js 打造的高端 WebGL 体验集合。每个 Demo �
 
 | Demo | 路由 | 核心体验 |
 | --- | --- | --- |
+| **AI Future Lab** | `/demo/doubao-inspired` | 浅色极简高级 AI 官网：8 个 Section 各自独立的滚动叙事（Sticky 能力切换 / 逐词排版 / 图片扩张 / **3D 纸牌折叠展开** / 横向知识轨道 / 圆形音乐视觉 / 极简收尾） |
 | **Future Experience** | `/demo/future-experience` | 8 个 Section（4 全屏 + 4 非全屏），每个 Section 拥有完全不同的滚动效果 |
 | **Nebula Odyssey** | `/demo/nebula` | 6 屏六世界，Scroll = Camera Movement |
 
@@ -82,6 +83,23 @@ src/
 ```
 
 ---
+
+## AI Future Lab（`/demo/doubao-inspired`）
+
+参考「豆包 about 页」的信息架构与滚动节奏重新设计，**所有 Logo / 文案 / 图片 / 图形均为原创**（图片全部程序化生成）。
+
+| Section | 滚动机制 |
+| --- | --- |
+| 01 Hero | 四阶段进入（逐行漂入 → 字距展开 → 副标题 → 光晕）+ 滚动离开（标题 scale/位移/淡出，背景反向视差） |
+| 02 Capabilities | Sticky 叙事：左侧标题固定，右侧 01–04 连续状态切换（当前 1 / 上一条 0.92 & 0.2 / 下一条 +60px），背景缓慢变色 |
+| 03 Writing | 逐词排版：blur → clear + opacity + translateY，随后整段横向位移 |
+| 04 Visual Creation | 图片 scale 0.35 → 1、圆角 40px → 0，继续放大后文字视差浮现，离开时缩小上移 |
+| 05 Card Collection | **3D Playing Cards：STACK → FAN → HORIZONTAL SPREAD**，同一条 scrubbed timeline 连续衔接，逐张 stagger 展开；排列完成后支持 hover / 3D tilt / 点击聚焦（其余卡片淡出 + Glass 信息面板） |
+| 06 Knowledge | 垂直滚动 → 水平轨道（ScrollTrigger pin），内容块以 scale / opacity / rotateY 进入 |
+| 07 Rhythm | 圆形视觉系统：核心旋转、波纹扩散、频谱线、Three.js 圆环粒子；文字沿圆运动 |
+| 08 Ending | 巨大文字从远处进入 → scale 1 → 4 快速靠近 → 只剩圆点并缓慢缩小 |
+
+结构与生命周期严格按需求：`sections/` + `animations/*.ts`（每个 Section 一个动画模块，`init` 返回 `cleanup`）+ `composables/`（滚动引擎、动画生命周期、媒体查询、减弱动效、纸牌状态）+ `data/`（文案与程序化图像）+ `styles/*.scss` + `three/`（SceneManager / ParticleBackground，仅音乐模块使用，离开即 dispose）。
 
 ## Future Experience（`/demo/future-experience`）
 
