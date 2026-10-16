@@ -5,7 +5,7 @@ export const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'gallery',
-    component: () => import('@/demos/gallery/App.vue'),
+    component: () => import('@/pages/DemoGallery.vue'),
     meta: { title: 'Demo Gallery' },
   },
   ...demos.map<RouteRecordRaw>((demo) => ({

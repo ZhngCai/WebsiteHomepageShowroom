@@ -20,6 +20,28 @@ export interface DemoEntry extends DemoMeta {
 
 export const demos: DemoEntry[] = [
   {
+    name: 'doubao-inspired',
+    title: 'AI Future Lab',
+    tagline: '高端 AI 产品官网',
+    description:
+      '浅色极简的高级 AI 官网。8 个 Section 各自拥有独立的滚动叙事：Sticky 能力切换、逐词排版、图片扩张、3D 纸牌折叠展开、横向知识轨道、圆形音乐视觉与极简收尾。',
+    stack: ['Vue3', 'GSAP', 'ScrollTrigger', 'Lenis', 'SCSS'],
+    accent: '#5b7cfa',
+    cover:
+      'radial-gradient(120% 120% at 78% 8%, #8b7cf633 0%, transparent 46%), linear-gradient(160deg, #ffffff 0%, #eef1ff 46%, #f7f7f8 100%)',
+    sections: [
+      'Hero',
+      'Capabilities',
+      'Writing',
+      'Visual Creation',
+      'Card Collection',
+      'Knowledge',
+      'Rhythm',
+      'Ending',
+    ],
+    load: () => import('@/demos/doubaoInspired/App.vue'),
+  },
+  {
     name: 'future-experience',
     title: 'Future Experience',
     tagline: '高级品牌官网',

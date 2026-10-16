@@ -1,0 +1,45 @@
+// AI Future Lab —— 设计令牌（浅色、克制、编辑感）
+// 颜色严格取自需求：白 / 极浅灰 / 近黑 / 中灰 + 柔和蓝紫作为唯一强调色
+
+$white: #ffffff;
+$paper: #f7f7f8;
+$paper-deep: #f2f2f0;
+$ink: #111111;
+$muted: #666666;
+$muted-light: #9a9a9a;
+$line: rgba(17, 17, 17, 0.08);
+$line-strong: rgba(17, 17, 17, 0.16);
+
+$accent-blue: #5b7cfa;
+$accent-violet: #8b7cf6;
+$accent-mist: #eef1ff;
+$accent-wash: #f4f5ff;
+
+$radius-sm: 16px;
+$radius-md: 24px;
+$radius-lg: 32px;
+
+$shadow-soft: 0 24px 60px -34px rgba(17, 17, 17, 0.22);
+$shadow-card: 0 30px 70px -40px rgba(17, 17, 17, 0.32);
+
+$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+$ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+$font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', 'Hiragino Sans GB',
+  'Microsoft YaHei', sans-serif;
+$font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, monospace;
+
+// 视口高度：优先 svh（Safari 动态视口），并提供 vh fallback
+@mixin full-viewport {
+  height: 100vh;
+  height: 100svh;
+}
+
+@mixin viewport-min {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+// 断点
+$bp-tablet: 1024px;
+$bp-mobile: 768px;

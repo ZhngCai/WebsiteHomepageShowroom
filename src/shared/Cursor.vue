@@ -79,6 +79,12 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+/* mix-blend-mode: difference 让光标在深色/浅色站点上都保持可见 */
+.cursor-ring,
+.cursor-ring + span {
+  mix-blend-mode: difference;
+}
+
 .cursor-ring.is-active {
   width: 62px;
   height: 62px;

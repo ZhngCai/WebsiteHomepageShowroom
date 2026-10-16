@@ -1,0 +1,107 @@
+@use './variables' as *;
+
+// AI Future Lab —— 共享动画工具
+// 原则：只动 transform / opacity（Safari 上最稳），避免大面积 filter 高频动画。
+
+// 注意：元素初始态（opacity/位移）一律由 animations/*.ts 用 gsap.set 设置，
+// 不写进 CSS —— 这样即使 JS 未执行，内容也始终可见（不会被永久隐藏）。
+
+// 图片统一走 GPU 合成层
+.afl-media {
+  display: block;
+  width: 100%;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+}
+
+// 3D 容器（纸牌 / 横向轨道使用）
+.afl-stage {
+  perspective: 1600px;
+  perspective-origin: 50% 46%;
+}
+
+.afl-preserve-3d {
+  transform-style: preserve-3d;
+}
+
+// 轻微的呼吸感，用于圆形音乐模块的核心
+@keyframes afl-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+// 结束时收缩为圆点
+@keyframes afl-collapse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+// 加载遮罩
+.afl-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  background: $white;
+}
+
+.afl-loading__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.afl-loading__mark {
+  font-family: $font-mono;
+  font-size: 11px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: $muted;
+}
+
+.afl-loading__bar {
+  width: 180px;
+  height: 1px;
+  background: $line-strong;
+  overflow: hidden;
+}
+
+.afl-loading__fill {
+  height: 100%;
+  background: linear-gradient(90deg, $accent-blue, $accent-violet);
+  transform-origin: left center;
+  animation: afl-loading-fill 1.1s $ease-out forwards;
+}
+
+@keyframes afl-loading-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.afl-loading-leave-active {
+  transition:
+    opacity 0.6s $ease-out,
+    filter 0.6s linear;
+}
+
+.afl-loading-leave-to {
+  opacity: 0;
+  filter: blur(10px);
+}
