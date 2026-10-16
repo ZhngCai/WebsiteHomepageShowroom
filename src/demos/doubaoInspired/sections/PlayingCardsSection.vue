@@ -27,6 +27,12 @@ function buildCards() {
 onMounted(() => {
   cards.value = buildCards()
   images.value = new Map(cards.value.map((card) => [card.id, createCardArt(card.seed)]))
+  // 提前异步解码：否则 12 张图会在首次滚入时才解码，造成明显长帧
+  for (const source of images.value.values()) {
+    const probe = new Image()
+    probe.src = source
+    void probe.decode?.().catch(() => {})
+  }
   if (!root.value) return
 
   // 等卡片渲染完成后再初始化动画（保证能取到全部 DOM 节点）

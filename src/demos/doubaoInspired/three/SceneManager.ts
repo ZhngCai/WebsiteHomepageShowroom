@@ -28,9 +28,11 @@ export class SceneManager {
     this.canvas = canvas
     this.onFrame = onFrame
 
-    this.renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' })
+    // 该模块只有柔和的圆点粒子：关掉 MSAA、并把 DPR 限制在 1.25
+    // —— 加色混合的点云是填充率瓶颈，像素量降 4 倍比任何微调都有效
+    this.renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: 'high-performance' })
     this.renderer.setClearAlpha(0)
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25))
     this.renderer.setSize(canvas.clientWidth || window.innerWidth, canvas.clientHeight || window.innerHeight, false)
     this.renderer.outputColorSpace = THREE.SRGBColorSpace
 
@@ -55,6 +57,15 @@ export class SceneManager {
     gsap.ticker.remove(this.tick)
     window.removeEventListener('resize', this.onResize)
     document.removeEventListener('visibilitychange', this.onVisibility)
+  }
+
+  /**
+   * 预热：在加载阶段渲染一帧，把着色器编译 / 纹理上传的一次性代价
+   * 留在 Loading 遮罩期间，而不是推迟到用户滚到该 Section 时。
+   */
+  warmup() {
+    this.resize()
+    this.renderer.render(this.scene, this.camera)
   }
 
   /** 由 ScrollTrigger 控制：离开该 Section 时彻底跳过渲染 */

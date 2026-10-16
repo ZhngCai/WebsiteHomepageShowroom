@@ -25,9 +25,11 @@ export function initMusicAnimation(root: HTMLElement) {
       canvas,
       onFrame: (time) => ring?.update(time, progress),
     })
-    ring = createParticleRing(window.innerWidth < 768 ? 420 : 900)
+    ring = createParticleRing(window.innerWidth < 768 ? 240 : 520)
     manager.scene.add(ring.object)
     manager.start()
+    // 先渲染一帧完成编译与上传（此时仍是加载阶段），再交给可见性门控
+    manager.warmup()
   }
 
   // 只有该 Section 进入视口时才渲染 WebGL —— 否则长页面会一直付出渲染开销

@@ -4,7 +4,7 @@ import { mulberry32 } from '@/shared/utils/art'
  * Section 04 的视觉作品 —— 程序化生成（与项目其它 Demo 一致，不引入外部图片素材）。
  * 风格：浅色、编辑感、克制的蓝紫渐变 + 细线结构 + 轻微颗粒。
  */
-export function createEditorialImage(width = 1600, height = 1000, seed = 20261016) {
+export function createEditorialImage(width = 1280, height = 800, seed = 20261016) {
   const canvas = document.createElement('canvas')
   canvas.width = width
   canvas.height = height

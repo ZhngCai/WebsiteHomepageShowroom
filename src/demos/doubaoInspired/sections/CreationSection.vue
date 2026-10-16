@@ -16,7 +16,14 @@ const image = ref(createEditorialImage())
     <div class="afl-creation__sticky">
       <div class="afl-creation__stage">
         <figure class="afl-creation__frame" data-creation-frame>
-          <img class="afl-media" :src="image" :alt="creationCopy.caption" loading="lazy" data-creation-image />
+          <img
+          class="afl-media"
+          :src="image"
+          :alt="creationCopy.caption"
+          decoding="async"
+          fetchpriority="high"
+          data-creation-image
+        />
         </figure>
 
         <div class="afl-creation__copy" data-creation-panel>

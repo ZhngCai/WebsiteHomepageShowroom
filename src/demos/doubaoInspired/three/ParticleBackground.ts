@@ -5,7 +5,7 @@ import { createRadialGlowTexture } from '@/shared/three/textures'
  * 音乐模块的轻量粒子场 —— 一个由点云构成的圆环。
  * 滚动驱动旋转与扩张；离开时由 SceneManager 统一 dispose。
  */
-export function createParticleRing(count = 900, radius = 15) {
+export function createParticleRing(count = 520, radius = 15) {
   const positions = new Float32Array(count * 3)
   const seeds = new Float32Array(count)
 
@@ -25,7 +25,7 @@ export function createParticleRing(count = 900, radius = 15) {
   geometry.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 1))
 
   const material = new THREE.PointsMaterial({
-    size: 0.34,
+    size: 0.38,
     map: createRadialGlowTexture('#5b7cfa', 64),
     transparent: true,
     opacity: 0.85,
