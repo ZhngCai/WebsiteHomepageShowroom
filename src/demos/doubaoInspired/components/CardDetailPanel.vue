@@ -55,8 +55,8 @@ const emit = defineEmits<{ close: [] }>()
   border: 1px solid rgba(17, 17, 17, 0.1);
   border-radius: $radius-lg;
   background: rgba(255, 255, 255, 0.72);
-  -webkit-backdrop-filter: blur(26px) saturate(150%);
-  backdrop-filter: blur(26px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
   box-shadow: $shadow-card;
 }
 

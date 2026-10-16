@@ -64,7 +64,8 @@ const image = ref(createEditorialImage())
   aspect-ratio: 16 / 10;
   overflow: hidden;
   border-radius: 40px;
-  box-shadow: $shadow-card;
+  // 画框不做投影：border-radius 动画期间阴影会随裁剪逐帧重栅格化，代价远大于收益
+  box-shadow: 0 1px 0 rgba(17, 17, 17, 0.06) inset;
   transform-origin: center center;
   will-change: transform, border-radius;
 
@@ -89,8 +90,8 @@ const image = ref(createEditorialImage())
   border: 1px solid $line;
   border-radius: $radius-lg;
   background: rgba(255, 255, 255, 0.78);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
-  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
   box-shadow: $shadow-soft;
 
   @media (max-width: $bp-mobile) {

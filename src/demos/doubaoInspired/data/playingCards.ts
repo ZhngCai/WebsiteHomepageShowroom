@@ -28,7 +28,7 @@ export const playingCards: PlayingCardData[] = [
 ]
 
 /** 每张卡片的图像：程序化生成的浅色艺术图（无外部素材） */
-export function createCardArt(seed: number, width = 480, height = 620) {
+export function createCardArt(seed: number, width = 400, height = 520) {
   const canvas = document.createElement('canvas')
   canvas.width = width
   canvas.height = height
@@ -86,10 +86,10 @@ export function createCardArt(seed: number, width = 480, height = 620) {
     ctx.fill()
   }
 
-  // 颗粒
+  // 颗粒（密度刻意很低：同步生成必须足够快，避免进入页面时的长帧）
   ctx.globalAlpha = 0.06
   ctx.fillStyle = '#111111'
-  const grains = Math.floor(width * height * 0.0012)
+  const grains = Math.floor(width * height * 0.0002)
   for (let i = 0; i < grains; i++) {
     ctx.fillRect(random() * width, random() * height, 1, 1)
   }

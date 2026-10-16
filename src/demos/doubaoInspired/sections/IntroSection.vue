@@ -97,10 +97,9 @@ const root = useScrollAnimation(initIntroAnimation)
   padding: 34px 36px 38px;
   border: 1px solid $line;
   border-radius: $radius-lg;
-  background: rgba(255, 255, 255, 0.72);
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
-  box-shadow: $shadow-soft;
+  // 背景为纯白/极浅灰：backdrop-filter 无视觉收益，只会让状态切换逐帧变贵
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 40px -34px rgba(17, 17, 17, 0.28);
   transform-origin: center top;
   will-change: transform, opacity;
 

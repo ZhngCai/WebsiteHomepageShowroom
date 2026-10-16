@@ -1,4 +1,4 @@
-import { gsap } from '../composables/useSmoothScroll'
+import { gsap, ScrollTrigger } from '../composables/useSmoothScroll'
 import { SceneManager } from '../three/SceneManager'
 import { createParticleRing } from '../three/ParticleBackground'
 
@@ -29,6 +29,14 @@ export function initMusicAnimation(root: HTMLElement) {
     manager.scene.add(ring.object)
     manager.start()
   }
+
+  // 只有该 Section 进入视口时才渲染 WebGL —— 否则长页面会一直付出渲染开销
+  const gate = ScrollTrigger.create({
+    trigger: root,
+    start: 'top bottom',
+    end: 'bottom top',
+    onToggle: (self) => manager?.setActive(self.isActive),
+  })
 
   const mm = gsap.matchMedia()
 
@@ -82,6 +90,7 @@ export function initMusicAnimation(root: HTMLElement) {
   })
 
   return () => {
+    gate.kill()
     mm.revert()
     manager?.dispose()
     manager = null

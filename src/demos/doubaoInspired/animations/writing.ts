@@ -18,7 +18,7 @@ export function initWritingAnimation(root: HTMLElement) {
 
   mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
     // 初始态由 JS 设置（JS 未执行时内容始终可见）
-    gsap.set(words, { opacity: 0, y: 34, filter: 'blur(14px)' })
+    gsap.set(words, { opacity: 0, y: 34, filter: 'blur(8px)' })
     gsap.set(aside, { opacity: 0, y: 30 })
 
     const timeline = gsap.timeline({

@@ -80,7 +80,7 @@ const facts = [
   background:
     radial-gradient(46% 46% at 50% 50%, rgba(91, 124, 250, 0.16) 0%, transparent 68%),
     radial-gradient(34% 34% at 62% 58%, rgba(139, 124, 246, 0.14) 0%, transparent 72%);
-  filter: blur(6px);
+  // 不使用 filter: blur —— 大面积模糊会随滚动逐帧重栅格化，纯渐变已达到同等柔度
   opacity: 0.9;
 }
 

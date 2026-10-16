@@ -22,6 +22,7 @@ export class SceneManager {
   private elapsed = 0
   private running = false
   private visible = true
+  private active = true
 
   constructor({ canvas, onFrame }: SceneManagerOptions) {
     this.canvas = canvas
@@ -54,6 +55,11 @@ export class SceneManager {
     gsap.ticker.remove(this.tick)
     window.removeEventListener('resize', this.onResize)
     document.removeEventListener('visibilitychange', this.onVisibility)
+  }
+
+  /** 由 ScrollTrigger 控制：离开该 Section 时彻底跳过渲染 */
+  setActive(value: boolean) {
+    this.active = value
   }
 
   resize() {
@@ -89,7 +95,7 @@ export class SceneManager {
   }
 
   private tick = (_time: number, deltaTime: number) => {
-    if (!this.visible) return
+    if (!this.visible || !this.active) return
     const delta = Math.min(deltaTime / 1000, 0.05)
     this.elapsed += delta
     this.onFrame?.(this.elapsed, delta)

@@ -57,7 +57,7 @@ const emit = defineEmits<{ select: [card: PlayingCardData] }>()
   border: 1px solid rgba(17, 17, 17, 0.1);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.9) inset,
-    0 22px 40px -28px rgba(17, 17, 17, 0.42);
+    0 16px 30px -24px rgba(17, 17, 17, 0.42);
   transform-style: preserve-3d;
   backface-visibility: hidden;
   cursor: pointer;
@@ -156,6 +156,6 @@ const emit = defineEmits<{ select: [card: PlayingCardData] }>()
 
 .afl-card.is-focused {
   cursor: default;
-  box-shadow: 0 40px 90px -40px rgba(17, 17, 17, 0.55);
+  box-shadow: 0 28px 60px -34px rgba(17, 17, 17, 0.5);
 }
 </style>
