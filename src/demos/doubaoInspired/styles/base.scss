@@ -71,6 +71,41 @@
   width: 100%;
 }
 
+// ---------- Section 布局高度（滚动行程，动画由各 Section 自己驱动） ----------
+.afl-hero {
+  @include viewport-min;
+}
+
+.afl-intro {
+  // 4 个能力状态逐个切换，需要足够的滚动行程
+  min-height: 400vh;
+}
+
+.afl-writing {
+  min-height: 220vh;
+}
+
+.afl-creation {
+  min-height: 260vh;
+}
+
+.afl-cards {
+  // 堆叠 → 扇形 → 横向展开，三段式需要最长行程
+  min-height: 300vh;
+}
+
+.afl-knowledge {
+  min-height: 300vh;
+}
+
+.afl-music {
+  min-height: 200vh;
+}
+
+.afl-ending {
+  min-height: 200vh;
+}
+
 .afl-container {
   width: 100%;
   max-width: 1320px;

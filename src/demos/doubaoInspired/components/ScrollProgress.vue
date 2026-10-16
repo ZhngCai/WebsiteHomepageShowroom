@@ -1,39 +1,19 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
-import { ScrollTrigger } from '../composables/useSmoothScroll'
+import { computed } from 'vue'
 
-const props = defineProps<{ sections: { id: string; label: string }[] }>()
+const props = defineProps<{
+  sections: { id: string; label: string }[]
+  /** 全局滚动进度 0~1（由 App 的单一全局 ScrollTrigger 提供） */
+  progress: number
+}>()
 
-const active = ref(0)
-const root = ref<HTMLElement>()
-let trigger: ScrollTrigger | null = null
-
-onMounted(() => {
-  const fill = root.value?.querySelector<HTMLElement>('[data-progress-fill]')
-  if (!fill) return
-
-  trigger = ScrollTrigger.create({
-    start: 'top top',
-    end: 'max',
-    onUpdate: (self) => {
-      // 单次样式写入（不读布局、不创建 tween），逐帧开销可忽略
-      fill.style.setProperty('--progress', self.progress.toFixed(4))
-      const index = Math.min(props.sections.length - 1, Math.round(self.progress * (props.sections.length - 1)))
-      if (index !== active.value) active.value = index
-    },
-  })
-})
-
-onBeforeUnmount(() => {
-  trigger?.kill()
-  trigger = null
-})
+const active = computed(() => Math.min(props.sections.length - 1, Math.round(props.progress * (props.sections.length - 1))))
 </script>
 
 <template>
-  <aside ref="root" class="afl-progress" aria-hidden="true">
+  <aside class="afl-progress" aria-hidden="true">
     <div class="afl-progress__track">
-      <span class="afl-progress__fill" data-progress-fill />
+      <span class="afl-progress__fill" :style="{ '--progress': progress.toFixed(4) }" />
     </div>
     <ul class="afl-progress__dots">
       <li

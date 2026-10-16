@@ -20,6 +20,8 @@ const meta = demos.find((demo) => demo.name === 'doubao-inspired')
 
 const ready = ref(false)
 const active = ref(0)
+/** 全局滚动进度：由滚动引擎的单一全局 ScrollTrigger 驱动 */
+const progress = ref(0)
 
 const sections = [
   { id: 'hero', label: 'Hero' },
@@ -37,8 +39,23 @@ let revealTimer: ReturnType<typeof setTimeout> | undefined
 onMounted(() => {
   store.setDemo('doubao-inspired')
 
-  const manager = getScrollManager()
+  const manager = getScrollManager({
+    onProgress: (value) => {
+      progress.value = value
+      active.value = Math.min(sections.length - 1, Math.round(value * (sections.length - 1)))
+    },
+  })
   manager.start()
+
+  if (import.meta.env.DEV) {
+    // 开发调试句柄：便于用 CDP 探针检查滚动引擎状态
+    ;(window as Window & { __afl?: unknown }).__afl = {
+      ScrollTrigger,
+      manager,
+      sections,
+      instanceCount: () => ScrollTrigger.getAll().length,
+    }
+  }
 
   // 等首帧与 ScrollTrigger 初始化完成后再收起加载遮罩，避免闪动
   requestAnimationFrame(() => {
@@ -52,6 +69,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   clearTimeout(revealTimer)
   disposeScrollManager()
+  if (import.meta.env.DEV) delete (window as Window & { __afl?: unknown }).__afl
 })
 
 function seek(index: number) {
@@ -64,7 +82,7 @@ function seek(index: number) {
   <div class="afl">
     <Header />
 
-    <ScrollProgress :sections="sections" />
+    <ScrollProgress :sections="sections" :progress="progress" />
 
     <main class="afl-main">
       <HeroSection />
